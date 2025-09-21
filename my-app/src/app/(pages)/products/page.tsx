@@ -3,9 +3,9 @@ import { LoadingSpinner } from '@/components';
 import { ProductI } from '@/interfaces'
 import { Button } from "@/components/ui/button";
 import {Grid, List } from "lucide-react";
-import { ProductResponse } from '@/types/responses';
 import React, { useEffect, useState } from 'react'
 import { ProductCard } from '@/components';
+import { apiServices } from "@/services/apiServices";
 
 export default function Products() {
     const [products,setProducts] = useState<ProductI[]>([]);
@@ -17,23 +17,15 @@ export default function Products() {
 
   async function fetchProducts() {
   setLoading(true);
-  setError(null); 
-  fetch("https://ecommerce.routemisr.com/api/v1/products")
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error("Failed to fetch products. Please try again.");
-      }
-      return res.json();
-    })
-    .then((data: ProductResponse) => {
-      setProducts(data.data);
-    })
-    .catch((err: any) => {
-      setError(err.message);
-    })
-    .finally(() => {
-      setLoading(false);
-    });
+    try {
+        const data = await apiServices.getProducts();
+        setProducts(data.data);
+    } catch (err:any) {
+        setError(err.message);
+    } finally {
+        setLoading(false);
+    }
+  
 }
     useEffect(()=>{fetchProducts();},[]);
 
@@ -90,7 +82,7 @@ export default function Products() {
         }`}
       >
         {products.map((product)=>(
-            <ProductCard title={product.title} price={product.price} key={product._id} images={product.images} ratingAverage={product.ratingsAverage} category={product.category} description={product.description} inStock={product.sold} view={viewMode}/>
+            <ProductCard title={product.title} price={product.price} id={product._id} key={product._id} images={product.images} ratingAverage={product.ratingsAverage} category={product.category} description={product.description} inStock={product.quantity>0} view={viewMode}/>
         ))}
       </div>
       </div>
