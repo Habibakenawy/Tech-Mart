@@ -6,6 +6,7 @@ import {Grid, List } from "lucide-react";
 import React, { useEffect, useState } from 'react'
 import { ProductCard } from '@/components';
 import { apiServices } from "@/services/apiServices";
+import { toast } from 'react-hot-toast';
 
 export default function Products() {
     const [products,setProducts] = useState<ProductI[]>([]);
@@ -40,6 +41,13 @@ export default function Products() {
       </div>
     }
 
+    async function handleAddtoCart(setLoadingCart:(value:boolean)=>void,productID:string,){
+    setLoadingCart(true);
+    const data=await apiServices.addToCart(productID)
+    console.log(data.message);
+    toast.success(data.message);
+    setLoadingCart(false)
+  }
   return (
  
 <div className="container mx-auto px-4 py-8">
@@ -82,7 +90,7 @@ export default function Products() {
         }`}
       >
         {products.map((product)=>(
-            <ProductCard title={product.title} price={product.price} id={product._id} key={product._id} images={product.images} ratingAverage={product.ratingsAverage} category={product.category} description={product.description} inStock={product.quantity>0} view={viewMode}/>
+            <ProductCard handleAddtoCart={handleAddtoCart}  quantity={product.quantity} title={product.title} price={product.price} id={product._id} key={product._id} images={product.images} ratingAverage={product.ratingsAverage} category={product.category} description={product.description} inStock={product.quantity>0} view={viewMode}/>
         ))}
       </div>
       </div>

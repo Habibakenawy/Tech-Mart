@@ -10,6 +10,7 @@ import Link from "next/link";
 import { StarIcon} from "lucide-react";
 import { apiServices } from "@/services/apiServices";
 import { toast } from 'react-hot-toast';
+import AddToCart from "@/components/addToCart";
 
 
 export default function ProductDetailPage() {
@@ -19,7 +20,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [loadingCart,setLoadingCart] = useState(false);
+  const [loadingCart,setLoadingCart] = useState<boolean>(false);
 
   async function fetchProductDetails(){
   setLoading(true);
@@ -203,16 +204,7 @@ export default function ProductDetailPage() {
 
           {/* Action Buttons */}
           <div className="flex gap-4">
-            <Button
-              size="lg"
-              className="flex-1"
-              disabled={product.quantity===0||loadingCart}
-              onClick={handleAddtoCart}
-            >
-              {loadingCart&&<Loader2 className="animate-spin"/>}
-              <ShoppingCart className="h-5 w-5 mr-2"  />
-              Add to Cart
-            </Button>
+           <AddToCart  productQuantity={product.quantity} loadingCart={loadingCart} handleAddtoCart={handleAddtoCart}  />
             <Button variant="outline" size="lg">
               <Heart className="h-5 w-5" />
             </Button>

@@ -1,12 +1,20 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { StarIcon, HeartIcon, EyeIcon, ShoppingCartIcon } from "lucide-react";
-import { useRouter } from 'next/navigation';
-
+import { StarIcon, HeartIcon, EyeIcon} from "lucide-react";
+import { useRouter } from "next/navigation";
+import AddToCart from "./addToCart";
+import { useState } from "react";
 
 export function ProductCard({
   title,
@@ -17,23 +25,18 @@ export function ProductCard({
   description,
   inStock,
   view,
-  id
+  id,
+  handleAddtoCart,
+  quantity,
 }) {
-  const router = useRouter(); // Initialize the router
-  
-  // A generic click handler to prevent event propagation
+    const [loadingCart,setLoadingCart] = useState<boolean>(false);
+  const router = useRouter();
   const handleActionClick = (e) => {
     e.stopPropagation();
   };
 
   const navigateToProductDetails = () => {
     router.push(`/products/${id}`);
-  };
-
-  const addToCart = (e) => {
-    handleActionClick(e);
-    // Add your cart logic here
-    console.log("Added to cart!");
   };
 
   const addToWishlist = (e) => {
@@ -54,8 +57,11 @@ export function ProductCard({
 
   return (
     <>
-      {view === 'grid' ? ( 
-        <Card onClick={navigateToProductDetails} className="flex flex-col h-full w-full max-w-sm rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+      {view === "grid" ? (
+        <Card
+          onClick={navigateToProductDetails}
+          className="flex flex-col h-full w-full max-w-sm rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
+        >
           <div className="relative">
             <Image
               src={images[0]}
@@ -71,39 +77,58 @@ export function ProductCard({
 
           <div className="flex flex-col flex-grow p-4">
             <CardHeader className="p-0 pb-2">
-              <CardTitle className="text-xl font-bold line-clamp-2">{title}</CardTitle>
+              <CardTitle className="text-xl font-bold line-clamp-2">
+                {title}
+              </CardTitle>
               <div className="flex items-center gap-1 text-yellow-500">
                 {[...Array(5)].map((_, i) => (
                   <StarIcon
                     key={i}
-                    className={`w-4 h-4 ${i < fullStars ? "fill-current" : ""} ${
+                    className={`w-4 h-4 ${
+                      i < fullStars ? "fill-current" : ""
+                    } ${
                       i === fullStars && hasHalfStar ? "half-star" : ""
                     } text-yellow-400`}
                   />
                 ))}
-                <span className="text-sm text-gray-500 ml-1">({ratingAverage.toFixed(1)})</span>
+                <span className="text-sm text-gray-500 ml-1">
+                  ({ratingAverage.toFixed(1)})
+                </span>
               </div>
             </CardHeader>
 
             <CardContent className="p-0 pt-2 text-sm text-gray-600">
-              <CardDescription className="line-clamp-2">{description}</CardDescription>
+              <CardDescription className="line-clamp-2">
+                {description}
+              </CardDescription>
             </CardContent>
 
             <CardFooter className="flex flex-col w-full gap-2 p-0 pt-4 mt-auto">
               <div className="flex w-full items-center justify-between">
-                <span className="text-2xl font-bold text-gray-900">${price.toFixed(2)}</span>
+                <span className="text-2xl font-bold text-gray-900">
+                  ${price.toFixed(2)}
+                </span>
                 <Badge
-                  className={`text-xs ${inStock ? 'bg-green-500 text-white' : 'bg-destructive'}`}
+                  className={`text-xs ${
+                    inStock ? "bg-green-500 text-white" : "bg-destructive"
+                  }`}
                 >
                   {inStock ? "In Stock" : "Out of Stock"}
                 </Badge>
               </div>
-              
+
               <div className="flex w-full gap-2">
-                <Button className="flex-1" onClick={addToCart} disabled={!inStock}>
+                {/* <Button className="flex-1" onClick={addToCart} disabled={!inStock}>
                   <ShoppingCartIcon className="mr-2 h-4 w-4" />
                   Add to Cart
-                </Button>
+                </Button> */}
+<AddToCart 
+  productQuantity={quantity} 
+  loadingCart={loadingCart} 
+  handleAddtoCart={() => handleAddtoCart(setLoadingCart, id)} 
+/>
+
+
                 <Button variant="outline" size="icon" onClick={addToWishlist}>
                   <HeartIcon className="h-4 w-4" />
                 </Button>
@@ -116,7 +141,10 @@ export function ProductCard({
         </Card>
       ) : (
         // List View Layout
-        <Card onClick={navigateToProductDetails} className="flex w-full rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+        <Card
+          onClick={navigateToProductDetails}
+          className="flex w-full rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
+        >
           <div className="relative w-40 h-40 flex-shrink-0">
             <Image
               src={images[0]}
@@ -138,12 +166,16 @@ export function ProductCard({
                 {[...Array(5)].map((_, i) => (
                   <StarIcon
                     key={i}
-                    className={`w-4 h-4 ${i < fullStars ? "fill-current" : ""} ${
+                    className={`w-4 h-4 ${
+                      i < fullStars ? "fill-current" : ""
+                    } ${
                       i === fullStars && hasHalfStar ? "half-star" : ""
                     } text-yellow-400`}
                   />
                 ))}
-                <span className="text-sm text-gray-500 ml-1">({ratingAverage.toFixed(1)})</span>
+                <span className="text-sm text-gray-500 ml-1">
+                  ({ratingAverage.toFixed(1)})
+                </span>
               </div>
               <CardDescription className="text-sm text-gray-600 mt-2 line-clamp-2 md:line-clamp-none">
                 {description}
@@ -152,18 +184,27 @@ export function ProductCard({
 
             {/* Right side: Price and Actions */}
             <div className="flex flex-col items-end gap-2 mt-4 md:mt-0 md:ml-4 flex-shrink-0">
-              <span className="text-2xl font-bold text-gray-900">${price.toFixed(2)}</span>
+              <span className="text-2xl font-bold text-gray-900">
+                ${price.toFixed(2)}
+              </span>
               <Badge
-                className={`text-xs ${inStock ? 'bg-green-500 text-white' : 'bg-destructive'}`}
+                className={`text-xs ${
+                  inStock ? "bg-green-500 text-white" : "bg-destructive"
+                }`}
               >
                 {inStock ? "In Stock" : "Out of Stock"}
               </Badge>
               <div className="flex items-center gap-2 mt-2">
-                <Button onClick={addToCart} disabled={!inStock}>
+                {/* <Button disabled={!inStock}>
                   <ShoppingCartIcon className="h-4 w-4" />
                   <span className="ml-2">Add to Cart</span>
-                </Button>
-                <Button variant="outline" size="icon" onClick={addToWishlist}>
+                </Button> */}
+<AddToCart 
+  productQuantity={quantity} 
+  loadingCart={loadingCart} 
+  handleAddtoCart={() => handleAddtoCart(id, quantity)} 
+/>
+           <Button variant="outline" size="icon" onClick={addToWishlist}>
                   <HeartIcon className="h-4 w-4" />
                 </Button>
                 <Button variant="outline" size="icon" onClick={viewProduct}>
