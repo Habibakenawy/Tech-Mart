@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Trash2, Plus, Minus, Loader2, ShoppingCart } from 'lucide-react'
 import Image from 'next/image'
+import Link from "next/link";
 
 export default function Cart() {
   const [cart, setCart] = useState<CartDataI | null>(null);
@@ -75,7 +76,7 @@ export default function Cart() {
         <ShoppingCart className="h-20 w-20 mx-auto text-gray-400 mb-4" />
         <h1 className="text-2xl font-bold mb-2">Your cart is empty.</h1>
         <p className="text-muted-foreground">Looks like you haven't added anything to your cart yet.</p>
-        <Button className="mt-6" onClick={() => window.history.back()}>Continue Shopping</Button>
+        <Link className="mt-6"  href={"/"}>Continue Shopping</Link>
       </div>
     );
   }
@@ -134,8 +135,8 @@ export default function Cart() {
                 <span>{formatPrice(cart.totalCartPrice)}</span>
               </div>
             </CardContent>
-            <div className="mt-6">
-              <Button className="w-full">Proceed to Checkout</Button>
+            <div className="mt-6 flex justify-center">
+              <Link className="w-full bg-black text-white text-center rounded-3xl border-2 border-amber-50" href={"/"}>Proceed to Checkout</Link>
             </div>
           </Card>
         </div>
