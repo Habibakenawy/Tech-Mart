@@ -6,7 +6,7 @@ function loading() {
   return (
 
 <>
- <Spinner className='mx-auto h-[50vh]'  />;
+ <Spinner  className='mx-auto h-[50vh]'/>;
 </>
   )
 }

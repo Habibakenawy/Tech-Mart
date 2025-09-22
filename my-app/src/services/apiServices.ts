@@ -23,16 +23,12 @@ class ApiServices {
     }
     
      async getProducts(): Promise<ProductResponse> {
-        try {
-            const res = await fetch(this.#baseUrl + `api/v1/products/`);
-            if (!res.ok) {
-                throw new Error("Failed to fetch products. Please try again.");
-            }
-            const data: ProductResponse = await res.json();
-            return data;
-        } catch (err: any) {
-            throw err;
-        }
+        return await fetch(this.#baseUrl+"api/v1/products",{
+          next:{
+            revalidate:5
+          },
+          cache:"no-cache"
+        }).then((res)=>res.json());
     }
 
     #getHeaders(){

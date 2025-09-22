@@ -1,6 +1,4 @@
-"use client"
-
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { apiServices } from '@/services/apiServices'
 import { CartProductI, CartDataI } from '@/interfaces/cart'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,32 +7,18 @@ import { Trash2, Plus, Minus, Loader2, ShoppingCart } from 'lucide-react'
 import Image from 'next/image'
 import Link from "next/link";
 
-export default function Cart() {
-  const [cart, setCart] = useState<CartDataI | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default async function Cart() {
+
 
   async function getCart() {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await apiServices.getLoggedUserCart();
-      if (data.status === 'success') {
-        setCart(data.data);
-      } else {
-        setError("Failed to fetch cart data.");
-      }
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred.");
-    } finally {
-      setLoading(false);
-    }
+
+  const data = await apiServices.getLoggedUserCart();
+  return data;
+ 
   }
+  const res= await getCart();
 
 
-  useEffect(() => {
-    getCart();
-  }, []);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -53,24 +37,8 @@ export default function Cart() {
     console.log(`Updating quantity for product ${productId} to ${count}`);
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <Loader2 className="h-10 w-10 animate-spin" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-8 text-center">
-        <p className="text-red-500 mb-4 font-bold">{error}</p>
-        <Button onClick={getCart}>Try Again</Button>
-      </div>
-    );
-  }
   
-  if (!cart || cart.products.length === 0) {
+  if (!res || res.data.products.length===0 ) {
     return (
       <div className="container mx-auto px-4 py-8 text-center">
         <ShoppingCart className="h-20 w-20 mx-auto text-gray-400 mb-4" />
@@ -87,7 +55,7 @@ export default function Cart() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Cart Items Section */}
         <div className="lg:col-span-2 space-y-4">
-          {cart.products.map((cartItem) => (
+          {res.data.products.map((cartItem) => (
             <Card key={cartItem.product._id} className="flex flex-col md:flex-row items-center p-4">
               <div className="relative flex-shrink-0 w-32 h-32 rounded-lg overflow-hidden border">
                 <Image
@@ -104,14 +72,23 @@ export default function Cart() {
                 <p className="text-xl font-semibold mt-2">{formatPrice(cartItem.price)}</p>
               </div>
               <div className="flex items-center gap-2 mt-4 md:mt-0 flex-shrink-0">
-                <Button variant="outline" size="icon" onClick={() => handleUpdateQuantity(cartItem.product._id, cartItem.count - 1)} disabled={cartItem.count <= 1}>
+                {/* <Button variant="outline" size="icon" onClick={() => handleUpdateQuantity(cartItem.product._id, cartItem.count - 1)} disabled={cartItem.count <= 1}>
+                  <Minus className="h-4 w-4" />
+                </Button> */}
+                  <Button variant="outline" size="icon" >
                   <Minus className="h-4 w-4" />
                 </Button>
                 <span className="font-medium text-lg w-8 text-center">{cartItem.count}</span>
-                <Button variant="outline" size="icon" onClick={() => handleUpdateQuantity(cartItem.product._id, cartItem.count + 1)}>
+                {/* <Button variant="outline" size="icon" onClick={() => handleUpdateQuantity(cartItem.product._id, cartItem.count + 1)}>
+                  <Plus className="h-4 w-4" />
+                </Button> */}
+                   <Button variant="outline" size="icon" >
                   <Plus className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" onClick={() => handleRemoveProduct(cartItem.product._id)}>
+                {/* <Button variant="ghost" size="icon" onClick={() => handleRemoveProduct(cartItem.product._id)}>
+                  <Trash2 className="h-5 w-5 text-destructive" />
+                </Button> */}
+                    <Button variant="ghost" size="icon">
                   <Trash2 className="h-5 w-5 text-destructive" />
                 </Button>
               </div>
@@ -128,11 +105,11 @@ export default function Cart() {
             <CardContent className="p-0 space-y-4">
               <div className="flex justify-between items-center text-lg font-medium">
                 <span>Items:</span>
-                <span>{cart.numOfCartItems}</span>
+                <span>{res.numOfCartItems}</span>
               </div>
               <div className="flex justify-between items-center text-2xl font-bold">
                 <span>Total:</span>
-                <span>{formatPrice(cart.totalCartPrice)}</span>
+                <span>{formatPrice(res.data.totalCartPrice)}</span>
               </div>
             </CardContent>
             <div className="mt-6 flex justify-center">
