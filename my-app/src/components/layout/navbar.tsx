@@ -100,18 +100,18 @@ export function Navbar() {
             <Link href="/profile" className="flex items-center gap-1">
             <UserCircleIcon />
             <span className="hidden md:inline">Profile</span>
-          </Link>     
+          </Link>
+            <ShoppingCartIcon />
               {/* Display the cart count as a badge */}
             {cartCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs font-semibold">
                 {cartCount}
               </span>
             )}
-          </Link>
-          
-        
-     <ShoppingCartIcon />
             <span className="hidden md:inline">Cart</span>
+          </Link>
+        
+
           {/* Mobile Menu Button (visible on small screens) */}
           <div className="md:hidden">
             <Sheet>
