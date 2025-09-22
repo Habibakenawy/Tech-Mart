@@ -65,6 +65,16 @@ class ApiServices {
         }).then(res=>res.json());
 
     }
+
+        async removeCartComponent(cartId:string):Promise<any>{
+        return await fetch(this.#baseUrl+"api/v1/cart/"+cartId,{
+            method:'DELETE',
+            headers:this.#getHeaders()
+        }).then(res=>res.json());
+
+    }
+
+
 }
 
 
