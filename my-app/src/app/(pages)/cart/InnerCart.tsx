@@ -7,6 +7,9 @@ import Link from "next/link";
 import CartComponent from './CartComponent'
 import { GetLoggedUserCart } from '@/interfaces';
 import { toast } from 'react-hot-toast';
+import { Button } from '@/components/ui/button'
+import { ShoppingCart,Loader2} from 'lucide-react'
+
 
 
 
@@ -24,6 +27,7 @@ import { toast } from 'react-hot-toast';
 export default function InnerCart({res}:InnerCartProps) {
 
     const [innerCartData,setInnerCartData] = useState<GetLoggedUserCart>(res);
+    const [clearCart,setClearCart] = useState(false);
     const handleRemoveProduct = async (productId:string,setLoading:(value:boolean)=>void) => {
         setLoading(true);
         try {
@@ -40,36 +44,84 @@ export default function InnerCart({res}:InnerCartProps) {
    
     };
 
-  return (
-    <div> <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Cart Items Section */}
-        <div className="lg:col-span-2 space-y-4">
-          {innerCartData.data.products.map((cartItem) => (
-          <CartComponent key={cartItem.product._id} cartItem={cartItem} handleRemoveProduct={handleRemoveProduct}></CartComponent>
-          ))}
-        </div>
+      const handleClearCart = async () => {
+        try {
+            await apiServices.clearCart();
+            toast.success("Cart Cleared!");
+            setClearCart(true);
+        } catch (error) {
+            console.error("Failed to clear cart", error);
+            toast.error("Failed to clear cart");
+        } finally {
+            setClearCart(false);
+            const newCartRes=await apiServices.getLoggedUserCart();
+            setInnerCartData(newCartRes);
+        }
+   
+    };
 
-        {/* Order Summary Section */}
-        <div className="lg:col-span-1">
-          <Card className="p-6">
-            <CardHeader className="p-0 mb-4">
-              <CardTitle className="text-2xl">Order Summary</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0 space-y-4">
-              <div className="flex justify-between items-center text-lg font-medium">
-                <span>Items:</span>
-                <span>{innerCartData.numOfCartItems}</span>
-              </div>
-              <div className="flex justify-between items-center text-2xl font-bold">
-                <span>Total:</span>
-                <span>{formatPrice(innerCartData.data.totalCartPrice)}</span>
-              </div>
-            </CardContent>
-            <div className="mt-6 flex justify-center">
-              <Link className="w-full bg-black text-white text-center rounded-3xl border-2 border-amber-50" href={"/"}>Proceed to Checkout</Link>
+     if (!innerCartData || innerCartData.data.products.length === 0 ) {
+      return (
+        <div className="container mx-auto px-4 py-8 text-center">
+          <ShoppingCart className="h-20 w-20 mx-auto text-gray-400 mb-4" />
+          <h1 className="text-2xl font-bold mb-2">Your cart is empty.</h1>
+          <p className="text-muted-foreground">Looks like you haven't added anything to your cart yet.</p>
+          <Link className="mt-6" href={"/"}>Continue Shopping</Link>
+        </div>
+      );
+    }
+
+
+return (
+    <div>
+        {innerCartData.data.products.length === 0 ? (
+            <div className="container mx-auto px-4 py-8 text-center">
+                <ShoppingCart className="h-20 w-20 mx-auto text-gray-400 mb-4" />
+                <h1 className="text-2xl font-bold mb-2">Your cart is empty.</h1>
+                <p className="text-muted-foreground">Looks like you haven't added anything to your cart yet.</p>
+                <Link className="mt-6" href={"/"}>Continue Shopping</Link>
             </div>
-          </Card>
-        </div>
-      </div></div>
-  )
+        ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Cart Items Section */}
+                <div className="lg:col-span-2 space-y-4">
+                    {innerCartData.data.products.map((cartItem) => (
+                        <CartComponent key={cartItem.product._id} cartItem={cartItem} handleRemoveProduct={handleRemoveProduct}></CartComponent>
+                    ))}
+                </div>
+                {/* Order Summary Section */}
+                <div className="lg:col-span-1">
+                    <Card className="p-6">
+                        <CardHeader className="p-0 mb-4">
+                            <CardTitle className="text-2xl">Order Summary</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0 space-y-4">
+                            <div className="flex justify-between items-center text-lg font-medium">
+                                <span>Items:</span>
+                                <span>{innerCartData.numOfCartItems}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-2xl font-bold">
+                                <span>Total:</span>
+                                <span>{formatPrice(innerCartData.data.totalCartPrice)}</span>
+                            </div>
+                        </CardContent>
+                        <div className="mt-6 flex flex-col gap-2">
+                            <Button className="w-full rounded-3xl" asChild>
+                                <Link href="/">Proceed to Checkout</Link>
+                            </Button>
+                            <Button 
+                                variant="outline" 
+                                className="w-full rounded-3xl" 
+                                onClick={handleClearCart}
+                                disabled={clearCart}
+                            >
+                                {clearCart ? <Loader2 className="h-5 w-5 animate-spin mx-auto" /> : "Clear Cart"}
+                            </Button>
+                        </div>
+                    </Card>
+                </div>
+            </div>
+        )}
+    </div>
+);
 }

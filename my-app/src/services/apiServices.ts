@@ -74,6 +74,15 @@ class ApiServices {
 
     }
 
+            async clearCart():Promise<any>{
+        return await fetch(this.#baseUrl+"api/v1/cart/",{
+            method:'DELETE',
+            headers:this.#getHeaders()
+        }).then(res=>res.json());
+
+    }
+
+
 
 }
 
