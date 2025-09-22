@@ -82,6 +82,16 @@ class ApiServices {
 
     }
 
+      async updateCartQuantity(cartId:string,count:number):Promise<any>{
+        return await fetch(this.#baseUrl+"api/v1/cart/"+cartId,{
+            method:'PUT',
+            body: JSON.stringify({
+                count
+            }),
+            headers:this.#getHeaders()
+        }).then(res=>res.json());
+
+    }
 
 
 }

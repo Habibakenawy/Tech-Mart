@@ -1,18 +1,24 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { apiServices } from '@/services/apiServices'
 import { Card} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Trash2, Plus, Minus, Loader2 } from 'lucide-react'
 import Image from 'next/image'
+import { cartContext } from '@/contexts/cartContext'
 
 
 
 
 
-export default function CartComponent({cartItem,handleRemoveProduct}) {
+
+export default function CartComponent({cartItem,handleRemoveProduct,handleUpdateQuantity}) {
     const [Loading,setLoading] = useState(false);
+    const [count,setCount]=useState(cartItem.count);
+    const [timeOutId,setTimeOutId] = useState<NodeJS.Timeout>();
+
+    const {setCartCount} = useContext(cartContext)
     
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -20,22 +26,18 @@ export default function CartComponent({cartItem,handleRemoveProduct}) {
       currency: 'USD',
     }).format(price);
   };
-// const handleRemoveProduct = async () => {
-//         setLoading(true);
-//         try {
-//             await apiServices.removeCartComponent(cartItem.product._id);
-//             toast.success("Product removed from cart!");
-//         } catch (error) {
-//             console.error("Failed to remove product:", error);
-//             toast.error("Failed to remove product.");
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
-    const handleUpdateQuantity = (productId: string, count: number) => {
 
-    console.log(`Updating quantity for product ${productId} to ${count}`);
-  };
+  async function  handleUpdateQuantityNumber(counter:number){
+  setCount(counter);
+  clearTimeout(timeOutId);
+  const id=setTimeout(()=>{
+    handleUpdateQuantity(cartItem.product._id,counter);
+    setCartCount(counter);
+  },500);
+  setTimeOutId(id);
+  }
+
+
 
 
   return (
@@ -55,25 +57,19 @@ export default function CartComponent({cartItem,handleRemoveProduct}) {
                 <p className="text-xl font-semibold mt-2">{formatPrice(cartItem?.price)}</p>
               </div>
               <div className="flex items-center gap-2 mt-4 md:mt-0 flex-shrink-0">
-                <Button variant="outline" size="icon" onClick={() => handleUpdateQuantity(cartItem.product._id, cartItem.count - 1)} disabled={cartItem.count <= 1}>
-                  <Minus className="h-4 w-4" />
+               <Button variant="outline" size="icon" onClick={() =>  handleUpdateQuantityNumber(count-1)} disabled={cartItem.count <= 1}>
+                 <Minus className="h-4 w-4" />
                 </Button>
-                  {/* <Button variant="outline" size="icon" >
-                  <Minus className="h-4 w-4" />
-                </Button> */}
-                <span className="font-medium text-lg w-8 text-center">{cartItem?.count}</span>
-                <Button variant="outline" size="icon" onClick={() => handleUpdateQuantity(cartItem.product._id, cartItem.count + 1)}>
+      
+                <span className="font-medium text-lg w-8 text-center">{count}</span>
+            <Button variant="outline" size="icon" onClick={() =>  handleUpdateQuantityNumber(count+1)} disabled={cartItem.count== cartItem.product.quantity}>
                   <Plus className="h-4 w-4" />
                 </Button>
-                   {/* <Button variant="outline" size="icon" >
-                  <Plus className="h-4 w-4" />
-                </Button> */}
+         
                 <Button variant="ghost" size="icon" onClick={() => handleRemoveProduct(cartItem.product._id,setLoading)}>
-                  {Loading?(<Loader2/>) :<Trash2 className="h-5 w-5 text-destructive" />}
+                  {Loading?(<Loader2  className="h-4 w-4 animate-spin"/>) :<Trash2 className="h-5 w-5 text-destructive" />}
                 </Button>
-                    {/* <Button variant="ghost" size="icon">
-                  <Trash2 className="h-5 w-5 text-destructive" />
-                </Button> */}
+            
               </div>
             </Card></>
   )

@@ -7,8 +7,11 @@ import React, { useEffect, useState } from 'react';
 import { ProductCard } from '@/components';
 import { apiServices } from "@/services/apiServices";
 import { toast } from 'react-hot-toast';
+import { cartContext } from '@/contexts/cartContext'
+import {useContext} from "react";
 
 export default function Products() {
+    const {setCartCount} = useContext(cartContext);
     const [products, setProducts] = useState<ProductI[]>([]);
     const [loading, setLoading] = useState(true); // Set initial loading state to true
     const [error, setError] = useState<string | null>(null); // Explicitly type error state
@@ -37,12 +40,14 @@ export default function Products() {
         try {
             const data = await apiServices.addToCart(productID);
             console.log(data.message);
+            setCartCount(data.numOfCartItems);
             toast.success(data.message);
         } catch (err: any) {
             console.error(err.message);
             toast.error(err.message || 'Failed to add to cart.');
         } finally {
             setLoadingCart(false);
+         
         }
     };
     

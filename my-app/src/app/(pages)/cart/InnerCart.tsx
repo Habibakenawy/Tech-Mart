@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { apiServices } from '@/services/apiServices'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from "next/link";
@@ -9,6 +9,8 @@ import { GetLoggedUserCart } from '@/interfaces';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button'
 import { ShoppingCart,Loader2} from 'lucide-react'
+import { cartContext } from '@/contexts/cartContext'
+
 
 
 
@@ -28,6 +30,7 @@ export default function InnerCart({res}:InnerCartProps) {
 
     const [innerCartData,setInnerCartData] = useState<GetLoggedUserCart>(res);
     const [clearCart,setClearCart] = useState(false);
+    const {setCartCount,cartCount} = useContext(cartContext);
     const handleRemoveProduct = async (productId:string,setLoading:(value:boolean)=>void) => {
         setLoading(true);
         try {
@@ -40,6 +43,7 @@ export default function InnerCart({res}:InnerCartProps) {
             setLoading(false);
             const newCartRes=await apiServices.getLoggedUserCart();
             setInnerCartData(newCartRes);
+            setCartCount(newCartRes.numOfCartItems);
         }
    
     };
@@ -56,6 +60,8 @@ export default function InnerCart({res}:InnerCartProps) {
             setClearCart(false);
             const newCartRes=await apiServices.getLoggedUserCart();
             setInnerCartData(newCartRes);
+            setCartCount(0);
+            
         }
    
     };
@@ -72,6 +78,22 @@ export default function InnerCart({res}:InnerCartProps) {
     }
 
 
+   const handleUpdateQuantity = async (productId: string, count: number) => {
+        try {
+            await apiServices.updateCartQuantity(productId, count);
+            toast.success("Cart updated!");
+        } catch (error) {
+            console.error("Failed to update quantity:", error);
+            toast.error("Failed to update quantity.");
+        } finally {
+            const newCartRes = await apiServices.getLoggedUserCart();
+            setInnerCartData(newCartRes);
+            setCartCount(newCartRes.numOfCartItems);
+
+        }
+    };
+
+
 return (
     <div>
         {innerCartData.data.products.length === 0 ? (
@@ -86,7 +108,7 @@ return (
                 {/* Cart Items Section */}
                 <div className="lg:col-span-2 space-y-4">
                     {innerCartData.data.products.map((cartItem) => (
-                        <CartComponent key={cartItem.product._id} cartItem={cartItem} handleRemoveProduct={handleRemoveProduct}></CartComponent>
+                        <CartComponent key={cartItem.product._id} cartItem={cartItem} handleRemoveProduct={handleRemoveProduct} handleUpdateQuantity={handleUpdateQuantity}></CartComponent>
                     ))}
                 </div>
                 {/* Order Summary Section */}

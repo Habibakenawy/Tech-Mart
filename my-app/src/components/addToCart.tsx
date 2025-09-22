@@ -2,6 +2,8 @@ import React from 'react'
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Loader2 } from "lucide-react";
 
+
+
 interface addToCartProps{
     productQuantity:number;
     loadingCart:boolean;
@@ -9,6 +11,7 @@ interface addToCartProps{
 }
 
 export default function AddToCart({productQuantity,loadingCart,handleAddtoCart}:addToCartProps) {
+  
   return (
     <>
         <Button

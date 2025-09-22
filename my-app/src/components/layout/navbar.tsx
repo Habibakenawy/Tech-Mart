@@ -1,9 +1,11 @@
 "use client"
 
-import * as React from "react"
+import {useContext,useEffect} from "react"
 import Link from "next/link"
 import { ShoppingCartIcon, UserCircleIcon, MenuIcon } from "lucide-react" // Import MenuIcon
 import { usePathname } from "next/navigation";
+import { cartContext } from '@/contexts/cartContext'
+import { apiServices } from "@/services/apiServices";
 
 import {
   NavigationMenu,
@@ -17,6 +19,7 @@ import { Button } from "@/components/ui/button"
 
 export function Navbar() {
   const pathname = usePathname();
+     const {cartCount} = useContext(cartContext);
 
   return (
     <div className="w-full">
@@ -94,14 +97,21 @@ export function Navbar() {
         {/* Right side: Cart, Profile and Mobile Menu Button */}
         <div className="flex items-center gap-4">
           <Link href="/cart" className="flex items-center gap-1">
-            <ShoppingCartIcon />
-            <span className="hidden md:inline">Cart</span>
-          </Link>
-          <Link href="/profile" className="flex items-center gap-1">
+            <Link href="/profile" className="flex items-center gap-1">
             <UserCircleIcon />
             <span className="hidden md:inline">Profile</span>
+          </Link>     
+              {/* Display the cart count as a badge */}
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs font-semibold">
+                {cartCount}
+              </span>
+            )}
           </Link>
-
+          
+        
+     <ShoppingCartIcon />
+            <span className="hidden md:inline">Cart</span>
           {/* Mobile Menu Button (visible on small screens) */}
           <div className="md:hidden">
             <Sheet>

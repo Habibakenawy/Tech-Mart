@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect ,useContext} from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { ProductI } from "@/interfaces";
@@ -11,11 +11,13 @@ import { StarIcon} from "lucide-react";
 import { apiServices } from "@/services/apiServices";
 import { toast } from 'react-hot-toast';
 import AddToCart from "@/components/addToCart";
+import { cartContext } from '@/contexts/cartContext'
+
 
 
 export default function ProductDetailPage() {
   const { id } = useParams();
-
+   const {setCartCount} = useContext(cartContext);
   const [product, setProduct] = useState<ProductI|null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -74,6 +76,7 @@ export default function ProductDetailPage() {
     const data=await apiServices.addToCart(product!._id)
     console.log(data.message);
     toast.success(data.message);
+    setCartCount(data.numOfCartItems);
     setLoadingCart(false)
   }
 
