@@ -16,10 +16,12 @@ import {
 } from "@/components/ui/navigation-menu"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
+import { useSelector } from "react-redux";
 
 export function Navbar() {
   const pathname = usePathname();
      const {cartCount} = useContext(cartContext);
+     const {count} = useSelector((state)=>state.counter);
 
   return (
     <div className="w-full">
@@ -43,8 +45,9 @@ export function Navbar() {
               <path d="M3 6h18" />
               <path d="M16 10a4 4 0 0 1-8 0" />
             </svg>
-            <span className="text-xl font-bold">TechMart</span>
+            <span className="text-xl font-bold">TechMart {count}</span>
           </Link>
+
         </div>
         
         {/* Middle: Regular Navigation Links (visible on md screens and larger) */}

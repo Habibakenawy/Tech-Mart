@@ -92,9 +92,22 @@ class ApiServices {
         }).then(res=>res.json());
 
     }
+     async checkOutSession(cartId:string):Promise<any>{
+        return await fetch(this.#baseUrl+"api/v1/orders/checkout-session/"+cartId+"?url=http://localhost:3000",{
+            body:JSON.stringify({
+            "shippingAddress":{
+            "details": "details",
+            "phone": "01010700999",
+             "city": "Cairo"
+        }
+            }),
+            headers:this.#getHeaders(),
+            method:"post"
+        }
+     ).then(res=>res.json())
+      
 
-
-}
+}}
 
 
 export const apiServices = new ApiServices()

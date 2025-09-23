@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { StarIcon, HeartIcon, EyeIcon} from "lucide-react";
+import { StarIcon, HeartIcon, EyeIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AddToCart from "./addToCart";
 import { useState } from "react";
@@ -29,7 +29,7 @@ export function ProductCard({
   handleAddtoCart,
   quantity,
 }) {
-    const [loadingCart,setLoadingCart] = useState<boolean>(false);
+
   const router = useRouter();
   const handleActionClick = (e) => {
     e.stopPropagation();
@@ -118,16 +118,10 @@ export function ProductCard({
               </div>
 
               <div className="flex w-full gap-2">
-                {/* <Button className="flex-1" onClick={addToCart} disabled={!inStock}>
-                  <ShoppingCartIcon className="mr-2 h-4 w-4" />
-                  Add to Cart
-                </Button> */}
-<AddToCart 
-  productQuantity={quantity} 
-  loadingCart={loadingCart} 
-  handleAddtoCart={() => handleAddtoCart(setLoadingCart, id)} 
-/>
-
+                <AddToCart
+                  productQuantity={quantity}
+                  handleAddtoCart={() => handleAddtoCart(id)}
+                />
 
                 <Button variant="outline" size="icon" onClick={addToWishlist}>
                   <HeartIcon className="h-4 w-4" />
@@ -199,12 +193,11 @@ export function ProductCard({
                   <ShoppingCartIcon className="h-4 w-4" />
                   <span className="ml-2">Add to Cart</span>
                 </Button> */}
-<AddToCart 
-  productQuantity={quantity} 
-  loadingCart={loadingCart} 
-  handleAddtoCart={() => handleAddtoCart(id, quantity)} 
-/>
-           <Button variant="outline" size="icon" onClick={addToWishlist}>
+                <AddToCart
+                  productQuantity={quantity}
+                  handleAddtoCart={() => handleAddtoCart(id)}
+                />
+                <Button variant="outline" size="icon" onClick={addToWishlist}>
                   <HeartIcon className="h-4 w-4" />
                 </Button>
                 <Button variant="outline" size="icon" onClick={viewProduct}>

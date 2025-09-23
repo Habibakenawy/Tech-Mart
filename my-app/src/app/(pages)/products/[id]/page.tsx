@@ -17,7 +17,7 @@ import { cartContext } from '@/contexts/cartContext'
 
 export default function ProductDetailPage() {
   const { id } = useParams();
-   const {setCartCount} = useContext(cartContext);
+   const {setCartCount,handleAddtoCart} = useContext(cartContext)!;
   const [product, setProduct] = useState<ProductI|null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -38,9 +38,9 @@ export default function ProductDetailPage() {
   }
   useEffect(()=>{fetchProductDetails()},[id])
 
- const roundedRating = Math.round(product?.ratingsAverage * 2) / 2;
-  const fullStars = Math.floor(roundedRating);
-  const hasHalfStar = roundedRating % 1 !== 0;
+const roundedRating = Math.round((product?.ratingsAverage ?? 0) * 2) / 2;
+const fullStars = Math.floor(roundedRating);
+const hasHalfStar = roundedRating % 1 !== 0;
 
 
   if (loading) { 
@@ -71,14 +71,14 @@ export default function ProductDetailPage() {
     }).format(price);
   };
 
-  async function handleAddtoCart(){
-    setLoadingCart(true);
-    const data=await apiServices.addToCart(product!._id)
-    console.log(data.message);
-    toast.success(data.message);
-    setCartCount(data.numOfCartItems);
-    setLoadingCart(false)
-  }
+  // async function handleAddtoCart(){
+  //   setLoadingCart(true);
+  //   const data=await apiServices.addToCart(product!._id)
+  //   console.log(data.message);
+  //   toast.success(data.message);
+  //   setCartCount(data.numOfCartItems);
+  //   setLoadingCart(false)
+  // }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -207,7 +207,7 @@ export default function ProductDetailPage() {
 
           {/* Action Buttons */}
           <div className="flex gap-4">
-           <AddToCart  productQuantity={product.quantity} loadingCart={loadingCart} handleAddtoCart={handleAddtoCart}  />
+           <AddToCart  productQuantity={product.quantity}  handleAddtoCart={()=>handleAddtoCart(product._id)}  />
             <Button variant="outline" size="lg">
               <Heart className="h-5 w-5" />
             </Button>

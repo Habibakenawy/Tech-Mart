@@ -11,7 +11,7 @@ import { cartContext } from '@/contexts/cartContext'
 import {useContext} from "react";
 
 export default function Products() {
-    const {setCartCount} = useContext(cartContext);
+    const {setCartCount,handleAddtoCart} = useContext(cartContext);
     const [products, setProducts] = useState<ProductI[]>([]);
     const [loading, setLoading] = useState(true); // Set initial loading state to true
     const [error, setError] = useState<string | null>(null); // Explicitly type error state
@@ -35,21 +35,21 @@ export default function Products() {
         fetchProducts();
     }, []);
 
-    const handleAddtoCart = async (setLoadingCart: (value: boolean) => void, productID: string) => {
-        setLoadingCart(true);
-        try {
-            const data = await apiServices.addToCart(productID);
-            console.log(data.message);
-            setCartCount(data.numOfCartItems);
-            toast.success(data.message);
-        } catch (err: any) {
-            console.error(err.message);
-            toast.error(err.message || 'Failed to add to cart.');
-        } finally {
-            setLoadingCart(false);
+    // const handleAddtoCart = async (setLoadingCart: (value: boolean) => void, productID: string) => {
+    //     setLoadingCart(true);
+    //     try {
+    //         const data = await apiServices.addToCart(productID);
+    //         console.log(data.message);
+    //         setCartCount(data.numOfCartItems);
+    //         toast.success(data.message);
+    //     } catch (err: any) {
+    //         console.error(err.message);
+    //         toast.error(err.message || 'Failed to add to cart.');
+    //     } finally {
+    //         setLoadingCart(false);
          
-        }
-    };
+    //     }
+    // };
     
     // Conditional Rendering Block
     if (loading) {

@@ -2,7 +2,7 @@ import React from 'react'
 import { Navbar } from '@/components/layout';
 import "./globals.css";
 import { Toaster } from 'react-hot-toast';
-import CartContextProvider from '@/contexts/cartContext';
+import ProviderContainer from '@/components/ProviderContainer';
 
 
 interface layoutI{
@@ -13,9 +13,10 @@ export default function layout({children}:layoutI) {
   return (
     <html>
     <body>    
-      <CartContextProvider>
+     <ProviderContainer>
       <Navbar></Navbar>
-      {children}</CartContextProvider> 
+      {children}
+      </ProviderContainer>
           <Toaster
      position="top-right"
      reverseOrder={false}

@@ -31,6 +31,8 @@ export default function InnerCart({res}:InnerCartProps) {
     const [innerCartData,setInnerCartData] = useState<GetLoggedUserCart>(res);
     const [clearCart,setClearCart] = useState(false);
     const {setCartCount,cartCount} = useContext(cartContext);
+    const [checkOutLoading,setCheckOutLoading] = useState(false);
+
     const handleRemoveProduct = async (productId:string,setLoading:(value:boolean)=>void) => {
         setLoading(true);
         try {
@@ -93,6 +95,15 @@ export default function InnerCart({res}:InnerCartProps) {
         }
     };
 
+     async function handleCheckOut(){
+        setCheckOutLoading(true);
+        const data= await apiServices.checkOutSession(innerCartData.cartId);
+        console.log(data);
+        setCheckOutLoading(false);
+        location.href = data.session.url;
+    }
+
+
 
 return (
     <div>
@@ -129,7 +140,7 @@ return (
                         </CardContent>
                         <div className="mt-6 flex flex-col gap-2">
                             <Button className="w-full rounded-3xl" asChild>
-                                <Link href="/">Proceed to Checkout</Link>
+                                <Link onClick={handleCheckOut}>Proceed to Checkout</Link>
                             </Button>
                             <Button 
                                 variant="outline" 
