@@ -19,7 +19,7 @@ export default async function Cart() {
   }
   const res= await getCart();
 
-  
+  console.log("Cart API response:", res);
   if (!res || res.data.products.length===0 ) {
     return (
       <div className="container mx-auto px-4 py-8 text-center">
@@ -30,6 +30,7 @@ export default async function Cart() {
       </div>
     );
   }
+  
 
   return (
     <div className="container mx-auto px-4 py-8">

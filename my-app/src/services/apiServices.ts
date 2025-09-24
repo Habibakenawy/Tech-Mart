@@ -3,6 +3,7 @@ import { ProductResponse } from "@/types/responses";
 import { AddToCartResponse } from "@/interfaces";
 import { GetLoggedUserCart } from "@/interfaces";
 import { userAddressI } from "@/interfaces";
+import { getSession } from "next-auth/react";
 class ApiServices {
      #baseUrl: string;
 
@@ -158,6 +159,63 @@ class ApiServices {
         }).then(res=>res.json());
 
     }
+
+          async  forgotPassword(email:string){
+        return await fetch(this.#baseUrl+"api/v1/auth/forgotPasswords",{
+            method:'POST',
+            body: JSON.stringify({
+              email,
+            }),
+            headers:this.#getHeaders()
+        }).then(res=>res.json());
+
+    }
+
+        async getCategories(): Promise<any> {
+        return await fetch(this.#baseUrl+"api/v1/categories",{
+          next:{
+            revalidate:5
+          },
+          cache:"no-cache"
+        }).then((res)=>res.json());
+    }
+
+         async getCategory(id: string): Promise<any> {
+        try {
+            const res = await fetch(this.#baseUrl + `api/v1/categories/` + id);
+            if (!res.ok) {
+                throw new Error("Failed to fetch category. Please try again.");
+            }
+            const data= await res.json();
+            return data;
+        } catch (err: any) {
+            throw err;
+        }
+    }
+
+    
+        async getBrands(): Promise<any> {
+        return await fetch(this.#baseUrl+"api/v1/brands",{
+          next:{
+            revalidate:5
+          },
+          cache:"no-cache"
+        }).then((res)=>res.json());
+    }
+
+          async getBrand(id: string): Promise<any> {
+        try {
+            const res = await fetch(this.#baseUrl + `api/v1/brands/` + id);
+            if (!res.ok) {
+                throw new Error("Failed to fetch brand. Please try again.");
+            }
+            const data= await res.json();
+            return data;
+        } catch (err: any) {
+            throw err;
+        }
+    }
+
 
 }
 

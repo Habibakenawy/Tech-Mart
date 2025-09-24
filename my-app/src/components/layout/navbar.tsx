@@ -53,7 +53,7 @@ export function Navbar() {
               <path d="M3 6h18" />
               <path d="M16 10a4 4 0 0 1-8 0" />
             </svg>
-            <span className="text-xl font-bold">TechMart {count}</span>
+            <span className="text-xl font-bold">TechMart </span>
           </Link>
         </div>
 

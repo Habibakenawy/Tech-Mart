@@ -1,6 +1,7 @@
 import { apiServices } from "@/services/apiServices";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import Cookies from "js-cookie";
 
 const handler = NextAuth({
   providers: [
@@ -23,6 +24,7 @@ const handler = NextAuth({
 
 
         if (res.message === "success") {
+             Cookies.set("token", res.token, { expires: 7 });
           return {
             id: res.user.email, 
             name: res.user.name,
@@ -44,8 +46,6 @@ const handler = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       console.log("JWT callback:", { token, user });
-
-
       if (user) {
         token.accessToken = user.token;
         token.role = user.role;

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Navbar } from '@/components/layout';
+import { Footer } from '@/components/layout/footer';
 import "./globals.css";
 import { Toaster } from 'react-hot-toast';
 import ProviderContainer from '@/components/ProviderContainer';
@@ -16,6 +17,7 @@ export default function layout({children}:layoutI) {
      <ProviderContainer>
       <Navbar></Navbar>
       {children}
+      <Footer></Footer>
       </ProviderContainer>
           <Toaster
      position="top-right"
