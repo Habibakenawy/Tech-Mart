@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cartContext } from '@/contexts/cartContext'
 
+
 import {
   Form,
   FormControl,
@@ -28,10 +29,11 @@ import { userAddressI } from '@/interfaces';
 import { toast } from 'react-hot-toast';
 import { Loader2 } from "lucide-react";
 import { scheme } from "@/schema/addressSchema";
-
+import { useSession } from "next-auth/react";
 
 export default function UserAddressPage() {
   const { cartId,setCartCount} = useContext(cartContext); 
+  const {data:session} = useSession();
 
 
   const form = useForm<z.infer<typeof scheme>>({
@@ -51,9 +53,10 @@ export default function UserAddressPage() {
 
     const values = form.getValues();
     try {
-      const res= await apiServices.addAddresses(values);
+      const res= await apiServices.addAddresses(values,String(session?.accessToken));
       console.log(res);
-      const checkoutRes = await apiServices.checkOutSession(cartId,values.details,values.phone,values.city);
+      console.log("why",cartId)
+      const checkoutRes = await apiServices.checkOutSession(cartId,String(session?.accessToken),values.details,values.phone,values.city);
       location.href = checkoutRes.session.url;
       setCartCount(0);
     } catch (error: any) {
@@ -68,8 +71,8 @@ export default function UserAddressPage() {
 
     const values = form.getValues();
     try {
-      await apiServices.addAddresses(values);
-      const checkoutRes = await apiServices.cashOrder(cartId, values.details, values.phone, values.city);
+      await apiServices.addAddresses(values,String(session?.accessToken));
+      const checkoutRes = await apiServices.cashOrder(cartId,String(session?.accessToken) ,values.details, values.phone, values.city);
       toast.success(checkoutRes.message || "Order placed successfully!");
       setCartCount(0);
       location.href="/allorders"

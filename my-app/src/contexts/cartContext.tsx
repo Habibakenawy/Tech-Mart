@@ -2,6 +2,7 @@
 import { apiServices } from '@/services/apiServices';
 import { createContext, ReactNode, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { useSession } from "next-auth/react";
 
 // Define the type for the cart context
 interface CartContextType {
@@ -23,8 +24,10 @@ export default function CartContextProvider({ children }: CartContextProviderPro
     const [cartCount, setCartCount] = useState(0);
     const [loadingCart,setLoadingCart] = useState(false);
     const [cartId,setCartId] = useState("");
+      const { data: session } = useSession();
 async function getCart() {
-  const response = await apiServices.getLoggedUserCart();
+  const response = await apiServices.getLoggedUserCart(String(session?.accessToken));
+  console.log(response.cartId)
   setCartCount(response.numOfCartItems);
 
   if (response.cartId) {
@@ -34,14 +37,20 @@ async function getCart() {
   }
 }
 
-useEffect(()=>{
+useEffect(() => {
+  if (session?.accessToken) {
     getCart();
-},[]);
+  }
+}, [session]);
 
 
   async function handleAddtoCart(productId:string){
+      if (!session?.accessToken) {
+      alert("You need to log in first");
+      return;
+    }
     setLoadingCart(true);
-    const data=await apiServices.addToCart(productId);
+    const data=await apiServices.addToCart(productId,session.accessToken);
     console.log(data.message);
     toast.success(data.message);
     setCartCount(data.numOfCartItems);

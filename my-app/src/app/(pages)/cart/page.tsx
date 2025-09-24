@@ -7,13 +7,15 @@ import Image from 'next/image'
 import Link from "next/link";
 import CartComponent from './CartComponent'
 import InnerCart from './InnerCart'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
 export default async function Cart() {
 
 
   async function getCart() {
-
-  const data = await apiServices.getLoggedUserCart();
+ const session = await getServerSession(authOptions);
+  const data = await apiServices.getLoggedUserCart(String(session?.accessToken));
   return data;
  
   }

@@ -10,6 +10,7 @@ import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button'
 import { ShoppingCart,Loader2} from 'lucide-react'
 import { cartContext } from '@/contexts/cartContext'
+import { useSession} from 'next-auth/react';
 
 
 
@@ -31,19 +32,20 @@ export default function InnerCart({res}:InnerCartProps) {
     const [innerCartData,setInnerCartData] = useState<GetLoggedUserCart>(res);
     const [clearCart,setClearCart] = useState(false);
     const {setCartCount,cartCount} = useContext(cartContext);
+    const {data:session} = useSession();
 
 
     const handleRemoveProduct = async (productId:string,setLoading:(value:boolean)=>void) => {
         setLoading(true);
         try {
-            await apiServices.removeCartComponent(productId);
+            await apiServices.removeCartComponent(productId,String(session?.accessToken));
             toast.success("Product removed from cart!");
         } catch (error) {
             console.error("Failed to remove product:", error);
             toast.error("Failed to remove product.");
         } finally {
             setLoading(false);
-            const newCartRes=await apiServices.getLoggedUserCart();
+            const newCartRes=await apiServices.getLoggedUserCart(String(session?.accessToken));
             setInnerCartData(newCartRes);
             setCartCount(newCartRes.numOfCartItems);
         }
@@ -52,7 +54,7 @@ export default function InnerCart({res}:InnerCartProps) {
 
       const handleClearCart = async () => {
         try {
-            await apiServices.clearCart();
+            await apiServices.clearCart(String(session?.accessToken));
             toast.success("Cart Cleared!");
             setClearCart(true);
         } catch (error) {
@@ -60,7 +62,7 @@ export default function InnerCart({res}:InnerCartProps) {
             toast.error("Failed to clear cart");
         } finally {
             setClearCart(false);
-            const newCartRes=await apiServices.getLoggedUserCart();
+            const newCartRes=await apiServices.getLoggedUserCart(String(session?.accessToken));
             setInnerCartData(newCartRes);
             setCartCount(0);
             
@@ -70,7 +72,7 @@ export default function InnerCart({res}:InnerCartProps) {
 
      if (!innerCartData || innerCartData.data.products.length === 0 ) {
       return (
-        <div className="container mx-auto px-4 py-8 text-center">
+     <div className="container mx-auto px-4 py-8 text-center min-h-[90vh] flex flex-col justify-center items-center bg-gray-100">
           <ShoppingCart className="h-20 w-20 mx-auto text-gray-400 mb-4" />
           <h1 className="text-2xl font-bold mb-2">Your cart is empty.</h1>
           <p className="text-muted-foreground">Looks like you haven't added anything to your cart yet.</p>
@@ -82,13 +84,13 @@ export default function InnerCart({res}:InnerCartProps) {
 
    const handleUpdateQuantity = async (productId: string, count: number) => {
         try {
-            await apiServices.updateCartQuantity(productId, count);
+            await apiServices.updateCartQuantity(productId, count,String(session?.accessToken));
             toast.success("Cart updated!");
         } catch (error) {
             console.error("Failed to update quantity:", error);
             toast.error("Failed to update quantity.");
         } finally {
-            const newCartRes = await apiServices.getLoggedUserCart();
+            const newCartRes = await apiServices.getLoggedUserCart(String(session?.accessToken));
             setInnerCartData(newCartRes);
             setCartCount(newCartRes.numOfCartItems);
 

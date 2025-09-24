@@ -1,9 +1,8 @@
 import { apiServices } from "@/services/apiServices";
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -22,11 +21,9 @@ const handler = NextAuth({
         console.log("Backend response:", res);
         console.log("NextAuth Secret:", process.env.NEXTAUTH_SECRET);
 
-
         if (res.message === "success") {
-             Cookies.set("token", res.token, { expires: 7 });
           return {
-            id: res.user.email, 
+            id: res.user.email,
             name: res.user.name,
             email: res.user.email,
             role: res.user.role,
@@ -34,7 +31,7 @@ const handler = NextAuth({
           };
         }
 
-        return null; 
+        return null;
       },
     }),
   ],
@@ -65,11 +62,12 @@ const handler = NextAuth({
     },
   },
 
-   secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
   },
   debug: true,
-});
+};
 
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
