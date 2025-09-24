@@ -109,7 +109,7 @@ export function Navbar() {
                 <UserCircleIcon />
                 <span className="hidden md:inline">Profile</span>
               </Link>
-
+             <p>Hi {session.user.name}</p>
               {/* Cart */}
               <Link href="/cart" className="flex items-center gap-1 relative">
                 <ShoppingCartIcon />

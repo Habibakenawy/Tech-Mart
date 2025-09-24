@@ -23,9 +23,8 @@ const handler = NextAuth({
 
 
         if (res.message === "success") {
-          // ✅ Flatten the user object
           return {
-            id: res.user.email, // or backend _id if available
+            id: res.user.email, 
             name: res.user.name,
             email: res.user.email,
             role: res.user.role,
@@ -33,20 +32,20 @@ const handler = NextAuth({
           };
         }
 
-        return null; // Sign in failed
+        return null; 
       },
     }),
   ],
 
   pages: {
-    signIn: "/auth/login", // custom login page
+    signIn: "/auth/login",
   },
 
   callbacks: {
     async jwt({ token, user }) {
       console.log("JWT callback:", { token, user });
 
-      // First login
+
       if (user) {
         token.accessToken = user.token;
         token.role = user.role;

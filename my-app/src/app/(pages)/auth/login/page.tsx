@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from 'react-hot-toast';
 import {
   Form,
@@ -27,6 +27,8 @@ const formSchema = z.object({
 export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const searchParams=useSearchParams();
+  const callbackURL=searchParams.get("callbackUrl")||"/products";
 
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -50,7 +52,7 @@ export default function LoginPage() {
 
       if (result?.ok) {
         toast.success("Login successful! Redirecting...");
-        router.push("/"); // Redirect to the homepage on success
+        router.push(callbackURL); 
       } else {
         toast.error("Sign in failed. Please check your credentials.");
       }
