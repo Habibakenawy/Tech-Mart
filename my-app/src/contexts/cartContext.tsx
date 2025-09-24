@@ -8,6 +8,7 @@ interface CartContextType {
     cartCount: number;
     setCartCount: React.Dispatch<React.SetStateAction<number>>;
     handleAddtoCart: (productId: string) => Promise<void>;
+    cartId:string
 }
 
 // Create the context with a default value
@@ -21,9 +22,11 @@ export default function CartContextProvider({ children }: CartContextProviderPro
     // Initialize the cart count state
     const [cartCount, setCartCount] = useState(0);
     const [loadingCart,setLoadingCart] = useState(false);
+    const [cartId,setCartId] = useState("");
     async function getCart(){
         const response = await apiServices.getLoggedUserCart();
         setCartCount(response.numOfCartItems);
+        setCartId(response.cartId);
     }
 useEffect(()=>{
     getCart();
@@ -39,7 +42,7 @@ useEffect(()=>{
     setLoadingCart(false)
   }
     return (
-        <cartContext.Provider value={{ cartCount, setCartCount,handleAddtoCart}}>
+        <cartContext.Provider value={{ cartCount, setCartCount,handleAddtoCart,cartId}}>
             {children}
         </cartContext.Provider>
     );

@@ -3,3 +3,4 @@ export * from "./category"
 export * from "./subCategory"
 export * from "./product"
 export * from './cart'
+export * from './address'

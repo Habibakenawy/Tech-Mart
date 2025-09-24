@@ -2,6 +2,7 @@ import { SingleProductResponse } from "@/types/responses";
 import { ProductResponse } from "@/types/responses";
 import { AddToCartResponse } from "@/interfaces";
 import { GetLoggedUserCart } from "@/interfaces";
+import { userAddressI } from "@/interfaces";
 class ApiServices {
      #baseUrl: string;
 
@@ -92,13 +93,15 @@ class ApiServices {
         }).then(res=>res.json());
 
     }
-     async checkOutSession(cartId:string):Promise<any>{
+
+
+  async checkOutSession(cartId:string, details?: string, phone?: string, city?: string):Promise<any>{
         return await fetch(this.#baseUrl+"api/v1/orders/checkout-session/"+cartId+"?url=http://localhost:3000",{
             body:JSON.stringify({
             "shippingAddress":{
-            "details": "details",
-            "phone": "01010700999",
-             "city": "Cairo"
+            "details": details,
+            "phone": phone,
+             "city": city
         }
             }),
             headers:this.#getHeaders(),
@@ -106,8 +109,26 @@ class ApiServices {
         }
      ).then(res=>res.json())
       
+}
 
-}}
+
+     async addAddresses(userAddress:userAddressI):Promise<any>{
+
+
+        return await fetch(this.#baseUrl+"api/v1/addresses",{
+            body:JSON.stringify({
+            "name": userAddress.name,
+            "details": userAddress.details,
+            "phone": userAddress.phone,
+             "city": userAddress.city
+        
+            }),
+            headers:this.#getHeaders(),
+            method:"post"
+        }
+     ).then(res=>res.json())
+}
+}
 
 
 export const apiServices = new ApiServices()
