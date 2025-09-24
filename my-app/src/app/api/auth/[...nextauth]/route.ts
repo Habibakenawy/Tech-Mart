@@ -1,7 +1,7 @@
 import { apiServices } from "@/services/apiServices";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import Cookies from "js-cookie";
+
 
 const handler = NextAuth({
   providers: [

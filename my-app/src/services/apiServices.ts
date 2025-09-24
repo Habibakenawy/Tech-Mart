@@ -3,7 +3,6 @@ import { ProductResponse } from "@/types/responses";
 import { AddToCartResponse } from "@/interfaces";
 import { GetLoggedUserCart } from "@/interfaces";
 import { userAddressI } from "@/interfaces";
-import { getSession } from "next-auth/react";
 class ApiServices {
      #baseUrl: string;
 
