@@ -96,6 +96,7 @@ class ApiServices {
 
 
   async checkOutSession(cartId:string, details?: string, phone?: string, city?: string):Promise<any>{
+      console.log(cartId)
         return await fetch(this.#baseUrl+"api/v1/orders/checkout-session/"+cartId+"?url=http://localhost:3000",{
             body:JSON.stringify({
             "shippingAddress":{
@@ -113,8 +114,6 @@ class ApiServices {
 
 
      async addAddresses(userAddress:userAddressI):Promise<any>{
-
-
         return await fetch(this.#baseUrl+"api/v1/addresses",{
             body:JSON.stringify({
             "name": userAddress.name,
@@ -128,6 +127,38 @@ class ApiServices {
         }
      ).then(res=>res.json())
 }
+
+
+  async cashOrder(cartId:string, details?: string, phone?: string, city?: string):Promise<any>{
+    console.log(cartId)
+        return await fetch(this.#baseUrl+"api/v1/orders/"+cartId,{
+            body:JSON.stringify({
+            "shippingAddress":{
+            "details": details,
+            "phone": phone,
+             "city": city
+        }
+            }),
+            headers:this.#getHeaders(),
+            method:"post"
+        }
+     ).then(res=>res.json())
+      
+}
+
+
+      async  login(email:string,password:number){
+        return await fetch(this.#baseUrl+"api/v1/auth/signin",{
+            method:'POST',
+            body: JSON.stringify({
+              email,
+              password
+            }),
+            headers:this.#getHeaders()
+        }).then(res=>res.json());
+
+    }
+
 }
 
 

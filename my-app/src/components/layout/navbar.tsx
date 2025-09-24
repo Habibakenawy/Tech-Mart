@@ -1,32 +1,40 @@
-"use client"
+"use client";
 
-import {useContext,useEffect} from "react"
-import Link from "next/link"
-import { ShoppingCartIcon, UserCircleIcon, MenuIcon } from "lucide-react" // Import MenuIcon
+import { useContext } from "react";
+import Link from "next/link";
+import { ShoppingCartIcon, UserCircleIcon, MenuIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { cartContext } from '@/contexts/cartContext'
-import { apiServices } from "@/services/apiServices";
-
+import { cartContext } from "@/contexts/cartContext";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/navigation-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
+import { useSession, signOut } from "next-auth/react";
 
 export function Navbar() {
   const pathname = usePathname();
-     const {cartCount} = useContext(cartContext);
-     const {count} = useSelector((state)=>state.counter);
+  const { cartCount } = useContext(cartContext);
+  const { count } = useSelector((state: any) => state.counter);
+  const { data: session, status } = useSession();
+
+  console.log("Navbar session:", session, status);
 
   return (
     <div className="w-full">
       <NavigationMenu className="mx-auto mt-10 max-w-7xl px-4 flex justify-between items-center">
-        {/* Left side: Logo and App Name */}
+        {/* Left side: Logo */}
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2">
             <svg
@@ -47,12 +55,10 @@ export function Navbar() {
             </svg>
             <span className="text-xl font-bold">TechMart {count}</span>
           </Link>
-
         </div>
-        
-        {/* Middle: Regular Navigation Links (visible on md screens and larger) */}
+
+        {/* Middle Nav Links */}
         <NavigationMenuList className="hidden md:flex">
-          {/* Home Link */}
           <NavigationMenuItem>
             <Link href="/" legacyBehavior passHref>
               <NavigationMenuLink
@@ -63,7 +69,6 @@ export function Navbar() {
             </Link>
           </NavigationMenuItem>
 
-          {/* Products Link */}
           <NavigationMenuItem>
             <Link href="/products" legacyBehavior passHref>
               <NavigationMenuLink
@@ -74,7 +79,6 @@ export function Navbar() {
             </Link>
           </NavigationMenuItem>
 
-          {/* Brands Link */}
           <NavigationMenuItem>
             <Link href="/brands" legacyBehavior passHref>
               <NavigationMenuLink
@@ -85,7 +89,6 @@ export function Navbar() {
             </Link>
           </NavigationMenuItem>
 
-          {/* Categories Link */}
           <NavigationMenuItem>
             <Link href="/categories" legacyBehavior passHref>
               <NavigationMenuLink
@@ -97,25 +100,42 @@ export function Navbar() {
           </NavigationMenuItem>
         </NavigationMenuList>
 
-        {/* Right side: Cart, Profile and Mobile Menu Button */}
+        {/* Right side: Depends on auth status */}
         <div className="flex items-center gap-4">
-          <Link href="/cart" className="flex items-center gap-1">
-            <Link href="/profile" className="flex items-center gap-1">
-            <UserCircleIcon />
-            <span className="hidden md:inline">Profile</span>
-          </Link>
-            <ShoppingCartIcon />
-              {/* Display the cart count as a badge */}
-            {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs font-semibold">
-                {cartCount}
-              </span>
-            )}
-            <span className="hidden md:inline">Cart</span>
-          </Link>
-        
+          {status === "authenticated" ? (
+            <>
+              {/* Profile */}
+              <Link href="/profile" className="flex items-center gap-1">
+                <UserCircleIcon />
+                <span className="hidden md:inline">Profile</span>
+              </Link>
 
-          {/* Mobile Menu Button (visible on small screens) */}
+              {/* Cart */}
+              <Link href="/cart" className="flex items-center gap-1 relative">
+                <ShoppingCartIcon />
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs font-semibold">
+                    {cartCount}
+                  </span>
+                )}
+                <span className="hidden md:inline">Cart</span>
+              </Link>
+
+              {/* Logout button */}
+              <Button
+                variant="ghost"
+                onClick={() => signOut({ callbackUrl: "/auth/login" })}
+              >
+                Logout
+              </Button>
+            </>
+          ) : (
+            <Link href="/auth/login">
+              <Button>Login</Button>
+            </Link>
+          )}
+
+          {/* Mobile Menu */}
           <div className="md:hidden">
             <Sheet>
               <SheetTrigger asChild>
@@ -129,17 +149,54 @@ export function Navbar() {
                 </SheetHeader>
                 <nav className="mt-4 flex flex-col gap-2">
                   <Link href="/" passHref>
-                    <Button variant="ghost" className="w-full justify-start">Home</Button>
+                    <Button variant="ghost" className="w-full justify-start">
+                      Home
+                    </Button>
                   </Link>
                   <Link href="/products" passHref>
-                    <Button variant="ghost" className="w-full justify-start">Products</Button>
+                    <Button variant="ghost" className="w-full justify-start">
+                      Products
+                    </Button>
                   </Link>
                   <Link href="/brands" passHref>
-                    <Button variant="ghost" className="w-full justify-start">Brands</Button>
+                    <Button variant="ghost" className="w-full justify-start">
+                      Brands
+                    </Button>
                   </Link>
                   <Link href="/categories" passHref>
-                    <Button variant="ghost" className="w-full justify-start">Categories</Button>
+                    <Button variant="ghost" className="w-full justify-start">
+                      Categories
+                    </Button>
                   </Link>
+
+                  {/* Extra menu items depending on auth */}
+                  {status === "authenticated" ? (
+                    <>
+                      <Link href="/profile" passHref>
+                        <Button variant="ghost" className="w-full justify-start">
+                          Profile
+                        </Button>
+                      </Link>
+                      <Link href="/cart" passHref>
+                        <Button variant="ghost" className="w-full justify-start">
+                          Cart ({cartCount})
+                        </Button>
+                      </Link>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start"
+                        onClick={() => signOut({ callbackUrl: "/auth/login" })}
+                      >
+                        Logout
+                      </Button>
+                    </>
+                  ) : (
+                    <Link href="/auth/login" passHref>
+                      <Button variant="ghost" className="w-full justify-start">
+                        Login
+                      </Button>
+                    </Link>
+                  )}
                 </nav>
               </SheetContent>
             </Sheet>
@@ -147,5 +204,5 @@ export function Navbar() {
         </div>
       </NavigationMenu>
     </div>
-  )
+  );
 }

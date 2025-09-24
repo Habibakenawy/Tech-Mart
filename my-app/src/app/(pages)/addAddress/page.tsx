@@ -27,14 +27,13 @@ import { apiServices } from '@/services/apiServices';
 import { userAddressI } from '@/interfaces';
 import { toast } from 'react-hot-toast';
 import { Loader2 } from "lucide-react";
-// Assuming the scheme is in a file named `scheme.ts`
 import { scheme } from "@/schema/addressSchema";
 
 
 export default function UserAddressPage() {
-  const { cartId } = useContext(cartContext); 
+  const { cartId,setCartCount} = useContext(cartContext); 
 
-  // Initialize the form with zodResolver using the imported schema
+
   const form = useForm<z.infer<typeof scheme>>({
     resolver: zodResolver(scheme),
     defaultValues: {
@@ -47,7 +46,6 @@ export default function UserAddressPage() {
 
   // Function to handle Visa payment
   async function handleVisaCheckout() {
-    // Manually trigger form validation
     const isValid = await form.trigger();
     if (!isValid) return;
 
@@ -57,26 +55,28 @@ export default function UserAddressPage() {
       console.log(res);
       const checkoutRes = await apiServices.checkOutSession(cartId,values.details,values.phone,values.city);
       location.href = checkoutRes.session.url;
+      setCartCount(0);
     } catch (error: any) {
       toast.error(error.message || "Failed to process your Visa payment.");
     }
   }
 
-  // Function to handle Cash on Delivery payment
-//   async function handleCashCheckout() {
-//     // Manually trigger form validation
-//     const isValid = await form.trigger();
-//     if (!isValid) return;
+//   Function to handle Cash on Delivery payment
+  async function handleCashCheckout() {
+    const isValid = await form.trigger();
+    if (!isValid) return;
 
-//     const values = form.getValues();
-//     try {
-//       await apiServices.addAddresses(values);
-//       const checkoutRes = await apiServices.checkOutSession(cartId, values.details, values.phone, values.city);
-//       toast.success(checkoutRes.message || "Order placed successfully!");
-//     } catch (error: any) {
-//       toast.error(error.message || "Failed to place your cash on delivery order.");
-//     }
-//   }
+    const values = form.getValues();
+    try {
+      await apiServices.addAddresses(values);
+      const checkoutRes = await apiServices.cashOrder(cartId, values.details, values.phone, values.city);
+      toast.success(checkoutRes.message || "Order placed successfully!");
+      setCartCount(0);
+      location.href="/allorders"
+    } catch (error: any) {
+      toast.error(error.message || "Failed to place your cash on delivery order.");
+    }
+  }
 
 
   const cities = scheme.shape.city.options;
@@ -170,7 +170,7 @@ export default function UserAddressPage() {
                 type="button" 
                 variant="outline"
                 className="w-full" 
-               // onClick={handleCashCheckout}
+               onClick={handleCashCheckout}
               >
                 Pay on Delivery
               </Button>

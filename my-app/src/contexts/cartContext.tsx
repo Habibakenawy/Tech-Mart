@@ -23,11 +23,17 @@ export default function CartContextProvider({ children }: CartContextProviderPro
     const [cartCount, setCartCount] = useState(0);
     const [loadingCart,setLoadingCart] = useState(false);
     const [cartId,setCartId] = useState("");
-    async function getCart(){
-        const response = await apiServices.getLoggedUserCart();
-        setCartCount(response.numOfCartItems);
-        setCartId(response.cartId);
-    }
+async function getCart() {
+  const response = await apiServices.getLoggedUserCart();
+  setCartCount(response.numOfCartItems);
+
+  if (response.cartId) {
+    setCartId(response.cartId);  
+  } else if (response.data && response.data._id) {
+    setCartId(response.data._id); 
+  }
+}
+
 useEffect(()=>{
     getCart();
 },[]);
