@@ -4,3 +4,11 @@ export interface CategoryI {
   slug: string
   image: string
 }
+
+export interface CategoryResponse {
+  _id: string;
+  name: string;
+  slug: string;
+  image: string;
+}
+

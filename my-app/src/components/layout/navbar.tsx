@@ -20,13 +20,11 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { useSelector } from "react-redux";
 import { useSession, signOut } from "next-auth/react";
 
 export function Navbar() {
   const pathname = usePathname();
   const { cartCount } = useContext(cartContext);
-  const { count } = useSelector((state: any) => state.counter);
   const { data: session, status } = useSession();
 
   console.log("Navbar session:", session, status);

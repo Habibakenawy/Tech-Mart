@@ -26,7 +26,7 @@ export default function BrandsPage() {
           setBrands([]);
           setError("No brands found.");
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Failed to fetch brands:", err);
         toast.error("Failed to load brands. Please try again.");
         setError("Failed to load brands.");

@@ -4,12 +4,11 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import { ProductI } from "@/interfaces";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Heart, Truck, Shield, RotateCcw, Loader2 } from "lucide-react";
+import {  Heart, Truck, Shield, RotateCcw } from "lucide-react";
 import { LoadingSpinner } from '@/components';
 import Link from "next/link";
 import { StarIcon} from "lucide-react";
 import { apiServices } from "@/services/apiServices";
-import { toast } from 'react-hot-toast';
 import AddToCart from "@/components/addToCart";
 import { cartContext } from '@/contexts/cartContext'
 
@@ -29,7 +28,7 @@ export default function ProductDetailPage() {
     try {
         const data = await apiServices.getProduct(String(id));
         setProduct(data.data);
-    } catch (err:any) {
+    } catch (err:unknown) {
         setError(err.message);
     } finally {
         setLoading(false);

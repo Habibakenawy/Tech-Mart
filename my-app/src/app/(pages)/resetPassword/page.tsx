@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-hot-toast";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter} from "next/navigation";
 import {
   Form,
   FormControl,
@@ -45,7 +45,7 @@ export default function ResetPasswordPage() {
         toast.success("Password successfully reset! You can now log in.");
         router.push("/auth/login"); 
       } else {
-        toast.error(response.statusMsg || "Failed to reset password.");
+        toast.error("Failed to reset password.");
       }
     } catch (error) {
       console.error("Reset password error:", error);

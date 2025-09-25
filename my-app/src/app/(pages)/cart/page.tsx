@@ -1,14 +1,10 @@
 import React from 'react'
 import { apiServices } from '@/services/apiServices'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Trash2, Plus, Minus, Loader2, ShoppingCart } from 'lucide-react'
-import Image from 'next/image'
 import Link from "next/link";
-import CartComponent from './CartComponent'
 import InnerCart from './InnerCart'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { ShoppingCart } from 'lucide-react';
 
 export default async function Cart() {
 
@@ -27,7 +23,7 @@ export default async function Cart() {
       <div className="container mx-auto px-4 py-8 text-center">
         <ShoppingCart className="h-20 w-20 mx-auto text-gray-400 mb-4" />
         <h1 className="text-2xl font-bold mb-2">Your cart is empty.</h1>
-        <p className="text-muted-foreground">Looks like you haven't added anything to your cart yet.</p>
+        <p className="text-muted-foreground">Looks like you have not added anything to your cart yet.</p>
         <Link className="mt-6"  href={"/"}>Continue Shopping</Link>
       </div>
     );

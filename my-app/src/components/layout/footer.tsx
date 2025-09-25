@@ -15,7 +15,7 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="text-xl font-bold text-white">TechMart</h3>
             <p className="text-sm">
-              Your one-stop shop for all things tech. We're dedicated to bringing you the best products at the best prices.
+              Your one-stop shop for all things tech. We are dedicated to bringing you the best products at the best prices.
             </p>
             <div className="flex space-x-4">
               <Link href="#" aria-label="Facebook" className="hover:text-white transition-colors">

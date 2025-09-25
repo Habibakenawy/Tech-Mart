@@ -31,7 +31,7 @@ export default function InnerCart({res}:InnerCartProps) {
 
     const [innerCartData,setInnerCartData] = useState<GetLoggedUserCart>(res);
     const [clearCart,setClearCart] = useState(false);
-    const {setCartCount,cartCount} = useContext(cartContext);
+    const {setCartCount} = useContext(cartContext);
     const {data:session} = useSession();
 
 
@@ -75,7 +75,7 @@ export default function InnerCart({res}:InnerCartProps) {
      <div className="container mx-auto px-4 py-8 text-center min-h-[90vh] flex flex-col justify-center items-center bg-gray-100">
           <ShoppingCart className="h-20 w-20 mx-auto text-gray-400 mb-4" />
           <h1 className="text-2xl font-bold mb-2">Your cart is empty.</h1>
-          <p className="text-muted-foreground">Looks like you haven't added anything to your cart yet.</p>
+          <p className="text-muted-foreground">Looks like you have not added anything to your cart yet.</p>
           <Link className="mt-6" href={"/"}>Continue Shopping</Link>
         </div>
       );
@@ -107,7 +107,7 @@ return (
             <div className="container mx-auto px-4 py-8 text-center">
                 <ShoppingCart className="h-20 w-20 mx-auto text-gray-400 mb-4" />
                 <h1 className="text-2xl font-bold mb-2">Your cart is empty.</h1>
-                <p className="text-muted-foreground">Looks like you haven't added anything to your cart yet.</p>
+                <p className="text-muted-foreground">Looks like you have not added anything to your cart yet.</p>
                 <Link className="mt-6" href={"/"}>Continue Shopping</Link>
             </div>
         ) : (

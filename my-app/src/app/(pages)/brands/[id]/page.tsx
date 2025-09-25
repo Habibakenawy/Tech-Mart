@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from "next/navigation";
 import { apiServices } from "@/services/apiServices";
-import { Loader2, Box, Frown } from "lucide-react";
+import { Loader2, Frown } from "lucide-react";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 
@@ -31,7 +31,7 @@ export default function BrandPage() {
           setBrand(brandData.data);
           setError(null);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Failed to fetch data:", err);
         toast.error("Failed to load data. Please try again.");
         setError("Failed to load data.");

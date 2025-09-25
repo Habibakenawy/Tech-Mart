@@ -49,3 +49,23 @@ export interface ProductI {
   ratingsAverage: number;
   id: string;
 }
+
+
+export interface RemoveCartResponse {
+  message: string;
+  data: { _id: string; totalCartPrice: number };
+}
+
+
+export interface ClearCartResponse {
+  message: string;
+}
+
+export interface UpdateCartQuantityResponse {
+  message: string;
+  data: {
+    _id: string;
+    product: string;
+    count: number;
+  };
+}

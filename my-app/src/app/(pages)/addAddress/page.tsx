@@ -1,11 +1,10 @@
 "use client";
-import { useState,useContext } from "react";
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { cartContext } from '@/contexts/cartContext'
 
 
@@ -25,9 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { apiServices } from '@/services/apiServices';
-import { userAddressI } from '@/interfaces';
 import { toast } from 'react-hot-toast';
-import { Loader2 } from "lucide-react";
 import { scheme } from "@/schema/addressSchema";
 import { useSession } from "next-auth/react";
 
@@ -59,9 +56,12 @@ export default function UserAddressPage() {
       const checkoutRes = await apiServices.checkOutSession(cartId,String(session?.accessToken),values.details,values.phone,values.city);
       location.href = checkoutRes.session.url;
       setCartCount(0);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to process your Visa payment.");
-    }
+    } catch (error: unknown) {
+    if (error instanceof Error) {
+    toast.error(error.message);
+  } else {
+    toast.error("Failed to process your Visa payment.");
+  }}
   }
 
 //   Function to handle Cash on Delivery payment
@@ -76,8 +76,12 @@ export default function UserAddressPage() {
       toast.success(checkoutRes.message || "Order placed successfully!");
       setCartCount(0);
       location.href="/allorders"
-    } catch (error: any) {
-      toast.error(error.message || "Failed to place your cash on delivery order.");
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+    toast.error(error.message);
+  } else {
+    toast.error("Failed to process your Visa payment.");
+  }
     }
   }
 

@@ -9,7 +9,7 @@ interface CartContextType {
     cartCount: number;
     setCartCount: React.Dispatch<React.SetStateAction<number>>;
     handleAddtoCart: (productId: string) => Promise<void>;
-    cartId:string
+    cartId:string|null
 }
 
 // Create the context with a default value

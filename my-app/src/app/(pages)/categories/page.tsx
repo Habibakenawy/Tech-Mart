@@ -26,7 +26,7 @@ export default function Categories() {
           setCategories([]);
           setError("No categories found.");
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Failed to fetch categories:", err);
         toast.error("Failed to load categories. Please try again.");
         setError("Failed to load categories.");
