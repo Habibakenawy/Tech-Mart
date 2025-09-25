@@ -1,12 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
+import { toast } from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link"; 
-import { toast } from 'react-hot-toast';
 import {
   Form,
   FormControl,
@@ -18,60 +16,55 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
-
+import { apiServices } from "@/services/apiServices";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-});
+  newPassword: z.string().min(6, { message: "Password must be at least 6 characters" })
+})
 
-export default function LoginPage() {
-  const router = useRouter();
+export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false);
-  const searchParams = useSearchParams();
-  const callbackURL = searchParams.get("callbackUrl") || "/products";
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      password: "",
+      newPassword: ""
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
-      const result = await signIn("credentials", {
-        redirect: false,
-        email: values.email,
-        password: values.password,
-      });
 
-      if (result?.ok) {
-        toast.success("Login successful! Redirecting...");
-        router.push(callbackURL);
+      const response = await apiServices.resetPassword(values.email.trim(), values.newPassword);
+      console.log(response)
+      if (response.token) {
+        toast.success("Password successfully reset! You can now log in.");
+        router.push("/auth/login"); 
       } else {
-        toast.error("Sign in failed. Please check your credentials.");
+        toast.error(response.statusMsg || "Failed to reset password.");
       }
     } catch (error) {
-      console.error("Login error:", error);
-      toast.error("An unexpected error occurred. Please try again.");
+      console.error("Reset password error:", error);
+      toast.error("An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="container mx-auto px-4 py-12 flex justify-center items-center min-h-screen">
       <div className="w-full max-w-sm p-8 space-y-6 bg-white rounded-xl shadow-lg border border-gray-200">
-        <h1 className="text-3xl font-bold text-center text-gray-800">Sign In</h1>
+        <h1 className="text-3xl font-bold text-center text-gray-800">Reset Password</h1>
         <p className="text-center text-sm text-gray-500">
-          Enter your email and password to access your account.
+          Enter your new password below.
         </p>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Email Field */}
+            {/* New email field added here */}
             <FormField
               control={form.control}
               name="email"
@@ -85,13 +78,13 @@ export default function LoginPage() {
                 </FormItem>
               )}
             />
-            {/* Password Field */}
+            {/* New Password field */}
             <FormField
               control={form.control}
-              name="password"
+              name="newPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>New Password</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="********" {...field} />
                   </FormControl>
@@ -99,22 +92,15 @@ export default function LoginPage() {
                 </FormItem>
               )}
             />
-            {/* Forgot Password Link */}
-            <Link
-              href="/forgotPassword"
-              className="text-sm text-blue-600 hover:underline text-right block"
-            >
-              Forgot Password?
-            </Link>
-            {/* Submit Button */}
+            {/* Submit button */}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing In...
+                  Resetting...
                 </>
               ) : (
-                "Sign In"
+                "Reset Password"
               )}
             </Button>
           </form>

@@ -154,6 +154,38 @@ class ApiServices {
     }
     return res.json();
   }
+
+  async resetPassword(email:string,newPassword:string):Promise<any>{
+    console.log(email,newPassword)
+  return await fetch(this.#baseUrl+"api/v1/auth/resetPassword",{
+  method:"PUT",
+      headers: {
+      "Content-Type": "application/json", 
+    },
+  body: JSON.stringify(
+    {
+   email,
+   newPassword
+    }
+  )
+}).then(res=>res.json());
+  }
+
+  async verifyResetCode(resetCode:string):Promise<any>{
+    console.log(resetCode);
+  return await fetch(this.#baseUrl+"api/v1/auth/verifyResetCode",{
+  method:"Post",
+  headers: {
+      "Content-Type": "application/json" 
+    },
+  body: JSON.stringify(
+    {
+   resetCode
+    }
+  )
+}).then(res=>res.json());
+  }
+
 }
 
 export const apiServices = new ApiServices();
