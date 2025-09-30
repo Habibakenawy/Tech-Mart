@@ -211,9 +211,6 @@ const hasHalfStar = roundedRating % 1 !== 0;
           {/* Action Buttons */}
           <div className="flex gap-4">
            <AddToCart  productQuantity={product.quantity}  handleAddtoCart={()=>handleAddtoCart?.(product._id)}  />
-            <Button variant="outline" size="lg">
-              <Heart className="h-5 w-5" />
-            </Button>
           </div>
 
           {/* Features */}

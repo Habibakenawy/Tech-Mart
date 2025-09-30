@@ -4,7 +4,7 @@ import { createContext, ReactNode, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useSession } from "next-auth/react";
 
-// Define the type for the cart context
+
 export interface CartContextType {
     cartCount?: number;
     setCartCount?: React.Dispatch<React.SetStateAction<number>>;
@@ -12,7 +12,6 @@ export interface CartContextType {
     cartId?:string|null
 }
 
-// Create the context with a default value
 export const cartContext = createContext<CartContextType | null>(null);
 
 interface CartContextProviderProps {

@@ -14,6 +14,9 @@ import {
   ForgotPasswordResponse,
   ResetPasswordResponse,
   VerifyResetCodeResponse,
+  GetLoggedUserWishlistResponse,
+  addToWishlistResponse,
+  removeFromWishlistResponse,
 } from "@/interfaces";
 import { CategoryResponse } from "@/types/responses";
 
@@ -202,6 +205,36 @@ class ApiServices {
       body: JSON.stringify({ resetCode }),
     }).then((res) => res.json());
   }
+   async getLoggedUserWishlist(token: string): Promise<GetLoggedUserWishlistResponse> {
+    return await fetch(this.#baseUrl + "api/v1/wishlist", {
+      headers: this.#getHeaders(token),
+    }).then((res) => res.json());
+  }
+
+   async addToWishList(productId: string, token: string): Promise<addToWishlistResponse> {
+    const res = await fetch(this.#baseUrl + `api/v1/wishlist`, {
+      method: "POST",
+      body: JSON.stringify({ productId }),
+      headers: this.#getHeaders(token),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to add product to cart: ${res.statusText}`);
+    }
+
+    return res.json();
+  }
+
+  async removeWishlist(productId: string, token: string): Promise<removeFromWishlistResponse> {
+    return await fetch(this.#baseUrl + "api/v1/wishlist/" + productId, {
+      method: "DELETE",
+      headers: this.#getHeaders(token),
+    }).then((res) => res.json());
+  }
+  
+
+
 }
+
 
 export const apiServices = new ApiServices();

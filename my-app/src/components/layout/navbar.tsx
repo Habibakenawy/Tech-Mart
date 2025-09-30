@@ -2,7 +2,7 @@
 
 import { useContext } from "react";
 import Link from "next/link";
-import { ShoppingCartIcon, UserCircleIcon, MenuIcon } from "lucide-react";
+import { ShoppingCartIcon, Heart, MenuIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { cartContext } from "@/contexts/cartContext";
 import {
@@ -22,13 +22,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { useSession, signOut } from "next-auth/react";
 import clsx from "clsx";
+import { WishlistContext } from "@/contexts/wishListContext";
 
 export function Navbar() {
   const pathname = usePathname();
   const { cartCount } = useContext(cartContext)!;
+  const wishlistCtx = useContext(WishlistContext);
   const { data: session, status } = useSession();
-
-  console.log("Navbar session:", session, status);
 
   return (
     <div className="w-full">
@@ -102,7 +102,8 @@ export function Navbar() {
               <NavigationMenuLink
                 className={clsx(
                   navigationMenuTriggerStyle(),
-                  pathname === "/categories" && "bg-accent text-accent-foreground"
+                  pathname === "/categories" &&
+                    "bg-accent text-accent-foreground"
                 )}
               >
                 Categories
@@ -111,16 +112,24 @@ export function Navbar() {
           </NavigationMenuItem>
         </NavigationMenuList>
 
-        {/* Right side: Depends on auth status */}
+        {/* Right side: Authenticated / Not Authenticated */}
         <div className="flex items-center gap-4">
           {status === "authenticated" ? (
             <>
-              {/* Profile */}
-              <Link href="/profile" className="flex items-center gap-1">
-                <UserCircleIcon />
-                <span className="hidden md:inline">Profile</span>
+              {/* Wishlist */}
+              <Link
+                href="/wishlist"
+                className="flex items-center gap-1 relative"
+              >
+                <Heart className="h-5 w-5 text-red-500" />
+                {wishlistCtx?.wishlist?.length &&
+                  wishlistCtx.wishlist.length > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs font-semibold">
+                      {wishlistCtx.count}
+                    </span>
+                  )}
+                <span className="hidden md:inline">Wishlist</span>
               </Link>
-              <p>Hi {session.user.name}</p>
 
               {/* Cart */}
               <Link href="/cart" className="flex items-center gap-1 relative">
@@ -133,7 +142,7 @@ export function Navbar() {
                 <span className="hidden md:inline">Cart</span>
               </Link>
 
-              {/* Logout button */}
+              {/* Logout */}
               <Button
                 variant="ghost"
                 onClick={() => signOut({ callbackUrl: "/auth/login" })}
@@ -208,16 +217,23 @@ export function Navbar() {
                     </Button>
                   </Link>
 
-                  {/* Extra menu items depending on auth */}
+                  {/* Extra items when logged in */}
                   {status === "authenticated" ? (
                     <>
-                      <Link href="/profile" passHref>
-                        <Button variant="ghost" className="w-full justify-start">
-                          Profile
+                      <Link href="/wishlist" passHref>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                        >
+                          Wishlist ({wishlistCtx?.wishlist?.length ?? 0})
                         </Button>
                       </Link>
+
                       <Link href="/cart" passHref>
-                        <Button variant="ghost" className="w-full justify-start">
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                        >
                           Cart ({cartCount})
                         </Button>
                       </Link>

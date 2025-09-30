@@ -18,7 +18,7 @@ export default function Products() {
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  // All Hooks must be at the top level
+
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -42,12 +42,12 @@ export default function Products() {
     }
   }
 
-  // Conditional Rendering Block
+  
   if (!cart || !cart.handleAddtoCart) {
     return <div>Cart functionality not available.</div>;
   }
   
-  // Destructure the function after the check
+
   const { handleAddtoCart } = cart;
 
   if (loading) {

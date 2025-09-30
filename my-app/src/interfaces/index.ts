@@ -7,3 +7,4 @@ export * from './address'
 export * from "./checkout"
 export * from "./orders"
 export * from "./auth"
+export * from "./wishlist"

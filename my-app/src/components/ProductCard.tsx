@@ -1,5 +1,5 @@
 "use client";
-
+import { toast } from "react-hot-toast";
 import {
   Card,
   CardContent,
@@ -15,22 +15,23 @@ import { StarIcon, HeartIcon, EyeIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AddToCart from "./addToCart";
 import { CategoryI } from "@/interfaces";
+import { WishlistContext} from "@/contexts/wishListContext";
+import { useContext } from "react";
 
-interface ProductCardProps{
-  title:string;
-  price:number;
-  images:string[];
-  ratingAverage:number;
-  category:CategoryI;
-  description:string;
-  inStock:boolean;
-  view:string;
-  id:string;
+interface ProductCardProps {
+  title: string;
+  price: number;
+  images: string[];
+  ratingAverage: number;
+  category: CategoryI;
+  description: string;
+  inStock: boolean;
+  view: string;
+  id: string;
   handleAddtoCart: (productId: string) => Promise<void>;
-  quantity:number;
+  quantity: number;
+  inWishlist?: boolean;
 }
-
-
 
 export function ProductCard({
   title,
@@ -43,30 +44,33 @@ export function ProductCard({
   view,
   id,
   handleAddtoCart,
-  quantity
-}:ProductCardProps) {
-
+  quantity,
+}: ProductCardProps) {
   const router = useRouter();
-  const handleActionClick = (e:React.MouseEvent) => {
+  const wishlistCtx = useContext(WishlistContext);
+  const handleActionClick = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
 
-  const navigateToProductDetails = () => {
+  const navigateToProductDetails = (e: React.MouseEvent) => {
+    handleActionClick(e);
     router.push(`/products/${id}`);
   };
 
-  const addToWishlist = (e: React.MouseEvent) => {
-    handleActionClick(e);
-    // Add your wishlist logic here
-    console.log("Added to wishlist!");
-  };
+const toggleWishlist = (e: React.MouseEvent) => {
+  handleActionClick(e);
+  if (!wishlistCtx) return;
 
-  const viewProduct = (e: React.MouseEvent) => {
-    handleActionClick(e);
-    // Add your view logic here
-    console.log("Viewing product!");
-  };
-
+  if (wishlistCtx.isInWishlist(id)) {
+    wishlistCtx.handleRemoveFromWishlist(id);
+    toast.success("Removed from wishlist ✅");
+    console.log(`Product ${id} removed from wishlist`);
+  } else {
+    wishlistCtx.handleAddtoWishlist(id);
+    toast.success("Added to wishlist ❤️");
+    console.log(`Product ${id} added to wishlist`);
+  }
+};
   const roundedRating = Math.round(ratingAverage * 2) / 2;
   const fullStars = Math.floor(roundedRating);
   const hasHalfStar = roundedRating % 1 !== 0;
@@ -74,10 +78,7 @@ export function ProductCard({
   return (
     <>
       {view === "grid" ? (
-        <Card
-          onClick={navigateToProductDetails}
-          className="flex flex-col h-full w-full max-w-sm rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
-        >
+        <Card className="flex flex-col h-full w-full max-w-sm rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
           <div className="relative">
             <Image
               src={images[0]}
@@ -139,10 +140,20 @@ export function ProductCard({
                   handleAddtoCart={() => handleAddtoCart(id)}
                 />
 
-                <Button variant="outline" size="icon" onClick={addToWishlist}>
-                  <HeartIcon className="h-4 w-4" />
+                <Button variant="outline" size="icon" onClick={toggleWishlist}>
+                  <HeartIcon
+                    className={`h-4 w-4 ${
+                      wishlistCtx?.isInWishlist(id)
+                        ? "text-red-500 fill-red-500"
+                        : "text-gray-400"
+                    }`}
+                  />
                 </Button>
-                <Button variant="outline" size="icon" onClick={viewProduct}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={navigateToProductDetails}
+                >
                   <EyeIcon className="h-4 w-4" />
                 </Button>
               </div>
@@ -151,10 +162,7 @@ export function ProductCard({
         </Card>
       ) : (
         // List View Layout
-        <Card
-          onClick={navigateToProductDetails}
-          className="flex w-full rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
-        >
+        <Card className="flex w-full rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
           <div className="relative w-40 h-40 flex-shrink-0">
             <Image
               src={images[0]}
@@ -205,18 +213,24 @@ export function ProductCard({
                 {inStock ? "In Stock" : "Out of Stock"}
               </Badge>
               <div className="flex items-center gap-2 mt-2">
-                {/* <Button disabled={!inStock}>
-                  <ShoppingCartIcon className="h-4 w-4" />
-                  <span className="ml-2">Add to Cart</span>
-                </Button> */}
                 <AddToCart
                   productQuantity={quantity}
                   handleAddtoCart={() => handleAddtoCart(id)}
                 />
-                <Button variant="outline" size="icon" onClick={addToWishlist}>
-                  <HeartIcon className="h-4 w-4" />
+                  <Button variant="outline" size="icon" onClick={toggleWishlist}>
+                  <HeartIcon
+                    className={`h-4 w-4 ${
+                      wishlistCtx?.isInWishlist(id)
+                        ? "text-red-500 fill-red-500"
+                        : "text-gray-400"
+                    }`}
+                  />
                 </Button>
-                <Button variant="outline" size="icon" onClick={viewProduct}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={navigateToProductDetails}
+                >
                   <EyeIcon className="h-4 w-4" />
                 </Button>
               </div>
