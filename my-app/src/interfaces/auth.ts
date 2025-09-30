@@ -1,13 +1,16 @@
 export interface LoginResponse {
   token: string;
+  message:string;
   user: {
-    id: string;
+    name: string;
     email: string;
+    role:string;
   };
 }
 
 export interface ForgotPasswordResponse {
-  message: string;
+  statusMsg: string;
+  message:string;
 }
 
 export interface ResetPasswordResponse {

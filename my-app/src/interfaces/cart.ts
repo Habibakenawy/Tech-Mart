@@ -1,6 +1,8 @@
 import { SubcategoryI } from "./subCategory";
 import { CategoryI } from "./category";
 import { BrandI } from "./brand";
+import { ProductI } from "./product";
+
 
 export interface AddToCartResponse{
   status: string
@@ -38,17 +40,6 @@ export interface CartProductI<T>{
   price: number
 }
 
-export interface ProductI {
-  subcategory: SubcategoryI[];
-  _id: string;
-  title: string;
-  quantity: number;
-  imageCover: string;
-  category: CategoryI;
-  brand: BrandI;
-  ratingsAverage: number;
-  id: string;
-}
 
 
 export interface RemoveCartResponse {

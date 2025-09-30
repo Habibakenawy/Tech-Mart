@@ -43,7 +43,7 @@ export default function VerifyResetCodePage() {
         toast.success("Code verified! You can now reset your password.");
         router.push(`/resetPassword`);
       } else {
-        toast.error(response.message || "Invalid or expired reset code.");
+        toast.error(response.status || "Invalid or expired reset code.");
       }
     } catch (error) {
       console.error("Verification error:", error);

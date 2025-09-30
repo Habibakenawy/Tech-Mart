@@ -6,19 +6,22 @@ import { Button } from '@/components/ui/button'
 import { Trash2, Plus, Minus, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import { cartContext } from '@/contexts/cartContext'
+import { CartProductI, ProductI } from '@/interfaces'
+
+
+interface CartComponentProps{
+  cartItem:CartProductI<ProductI>,
+  handleRemoveProduct: (productId: string, setLoading:(value:boolean)=>void)=>void,
+  handleUpdateQuantity: (productId: string, count: number)=>void
+}
 
 
 
-
-
-
-export default function CartComponent({cartItem,handleRemoveProduct,handleUpdateQuantity}) {
+export default function CartComponent({cartItem,handleRemoveProduct,handleUpdateQuantity}:CartComponentProps) {
     const [Loading,setLoading] = useState(false);
     const [count,setCount]=useState(cartItem.count);
     const [timeOutId,setTimeOutId] = useState<NodeJS.Timeout>();
-
-    const {setCartCount} = useContext(cartContext)
-    
+    const {setCartCount} = useContext(cartContext)!;   
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -31,7 +34,9 @@ export default function CartComponent({cartItem,handleRemoveProduct,handleUpdate
   clearTimeout(timeOutId);
   const id=setTimeout(()=>{
     handleUpdateQuantity(cartItem.product._id,counter);
+    if (setCartCount) {
     setCartCount(counter);
+  }
   },500);
   setTimeOutId(id);
   }

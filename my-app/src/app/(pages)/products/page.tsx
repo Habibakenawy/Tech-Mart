@@ -10,19 +10,25 @@ import { toast } from "react-hot-toast";
 import { cartContext } from "@/contexts/cartContext";
 import { useContext } from "react";
 
+
 export default function Products() {
-  const { setCartCount, handleAddtoCart } = useContext(cartContext);
+  const cart = useContext(cartContext);
   const [products, setProducts] = useState<ProductI[]>([]);
-  const [loading, setLoading] = useState(true); 
-  const [error, setError] = useState<string | null>(null); 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
+  // All Hooks must be at the top level
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
   async function fetchProducts() {
-    setLoading(true); 
+    setLoading(true);
     try {
       const data = await apiServices.getProducts();
       setProducts(data.data);
-      setError(null); 
+      setError(null);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message || "An unexpected error occurred.");
@@ -32,31 +38,18 @@ export default function Products() {
       }
 
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   }
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  // const handleAddtoCart = async (setLoadingCart: (value: boolean) => void, productID: string) => {
-  //     setLoadingCart(true);
-  //     try {
-  //         const data = await apiServices.addToCart(productID);
-  //         console.log(data.message);
-  //         setCartCount(data.numOfCartItems);
-  //         toast.success(data.message);
-  //     } catch (err: any) {
-  //         console.error(err.message);
-  //         toast.error(err.message || 'Failed to add to cart.');
-  //     } finally {
-  //         setLoadingCart(false);
-
-  //     }
-  // };
-
   // Conditional Rendering Block
+  if (!cart || !cart.handleAddtoCart) {
+    return <div>Cart functionality not available.</div>;
+  }
+  
+  // Destructure the function after the check
+  const { handleAddtoCart } = cart;
+
   if (loading) {
     return <LoadingSpinner />;
   }

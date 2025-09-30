@@ -5,10 +5,4 @@ export interface CategoryI {
   image: string
 }
 
-export interface CategoryResponse {
-  _id: string;
-  name: string;
-  slug: string;
-  image: string;
-}
 

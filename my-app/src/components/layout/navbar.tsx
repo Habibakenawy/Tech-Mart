@@ -21,10 +21,11 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useSession, signOut } from "next-auth/react";
+import clsx from "clsx";
 
 export function Navbar() {
   const pathname = usePathname();
-  const { cartCount } = useContext(cartContext);
+  const { cartCount } = useContext(cartContext)!;
   const { data: session, status } = useSession();
 
   console.log("Navbar session:", session, status);
@@ -51,7 +52,7 @@ export function Navbar() {
               <path d="M3 6h18" />
               <path d="M16 10a4 4 0 0 1-8 0" />
             </svg>
-            <span className="text-xl font-bold">TechMart </span>
+            <span className="text-xl font-bold">TechMart</span>
           </Link>
         </div>
 
@@ -60,7 +61,10 @@ export function Navbar() {
           <NavigationMenuItem>
             <Link href="/" legacyBehavior passHref>
               <NavigationMenuLink
-                className={navigationMenuTriggerStyle({ isActive: pathname === "/" })}
+                className={clsx(
+                  navigationMenuTriggerStyle(),
+                  pathname === "/" && "bg-accent text-accent-foreground"
+                )}
               >
                 Home
               </NavigationMenuLink>
@@ -70,7 +74,10 @@ export function Navbar() {
           <NavigationMenuItem>
             <Link href="/products" legacyBehavior passHref>
               <NavigationMenuLink
-                className={navigationMenuTriggerStyle({ isActive: pathname === "/products" })}
+                className={clsx(
+                  navigationMenuTriggerStyle(),
+                  pathname === "/products" && "bg-accent text-accent-foreground"
+                )}
               >
                 Products
               </NavigationMenuLink>
@@ -80,7 +87,10 @@ export function Navbar() {
           <NavigationMenuItem>
             <Link href="/brands" legacyBehavior passHref>
               <NavigationMenuLink
-                className={navigationMenuTriggerStyle({ isActive: pathname === "/brands" })}
+                className={clsx(
+                  navigationMenuTriggerStyle(),
+                  pathname === "/brands" && "bg-accent text-accent-foreground"
+                )}
               >
                 Brands
               </NavigationMenuLink>
@@ -90,7 +100,10 @@ export function Navbar() {
           <NavigationMenuItem>
             <Link href="/categories" legacyBehavior passHref>
               <NavigationMenuLink
-                className={navigationMenuTriggerStyle({ isActive: pathname === "/categories" })}
+                className={clsx(
+                  navigationMenuTriggerStyle(),
+                  pathname === "/categories" && "bg-accent text-accent-foreground"
+                )}
               >
                 Categories
               </NavigationMenuLink>
@@ -107,11 +120,12 @@ export function Navbar() {
                 <UserCircleIcon />
                 <span className="hidden md:inline">Profile</span>
               </Link>
-             <p>Hi {session.user.name}</p>
+              <p>Hi {session.user.name}</p>
+
               {/* Cart */}
               <Link href="/cart" className="flex items-center gap-1 relative">
                 <ShoppingCartIcon />
-                {cartCount > 0 && (
+                {cartCount! > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs font-semibold">
                     {cartCount}
                   </span>
@@ -147,22 +161,49 @@ export function Navbar() {
                 </SheetHeader>
                 <nav className="mt-4 flex flex-col gap-2">
                   <Link href="/" passHref>
-                    <Button variant="ghost" className="w-full justify-start">
+                    <Button
+                      variant="ghost"
+                      className={clsx(
+                        "w-full justify-start",
+                        pathname === "/" && "bg-accent text-accent-foreground"
+                      )}
+                    >
                       Home
                     </Button>
                   </Link>
                   <Link href="/products" passHref>
-                    <Button variant="ghost" className="w-full justify-start">
+                    <Button
+                      variant="ghost"
+                      className={clsx(
+                        "w-full justify-start",
+                        pathname === "/products" &&
+                          "bg-accent text-accent-foreground"
+                      )}
+                    >
                       Products
                     </Button>
                   </Link>
                   <Link href="/brands" passHref>
-                    <Button variant="ghost" className="w-full justify-start">
+                    <Button
+                      variant="ghost"
+                      className={clsx(
+                        "w-full justify-start",
+                        pathname === "/brands" &&
+                          "bg-accent text-accent-foreground"
+                      )}
+                    >
                       Brands
                     </Button>
                   </Link>
                   <Link href="/categories" passHref>
-                    <Button variant="ghost" className="w-full justify-start">
+                    <Button
+                      variant="ghost"
+                      className={clsx(
+                        "w-full justify-start",
+                        pathname === "/categories" &&
+                          "bg-accent text-accent-foreground"
+                      )}
+                    >
                       Categories
                     </Button>
                   </Link>

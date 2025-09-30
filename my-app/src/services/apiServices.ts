@@ -10,12 +10,12 @@ import {
   CheckoutSessionResponse,
   AddAddressResponse,
   CashOrderResponse,
-  CategoryResponse,
   LoginResponse,
   ForgotPasswordResponse,
   ResetPasswordResponse,
   VerifyResetCodeResponse,
 } from "@/interfaces";
+import { CategoryResponse } from "@/types/responses";
 
 class ApiServices {
   #baseUrl: string;

@@ -19,7 +19,7 @@ export default function ProductDetailPage() {
    const {setCartCount,handleAddtoCart} = useContext(cartContext)!;
   const [product, setProduct] = useState<ProductI|null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string|null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [loadingCart,setLoadingCart] = useState<boolean>(false);
 
@@ -29,7 +29,11 @@ export default function ProductDetailPage() {
         const data = await apiServices.getProduct(String(id));
         setProduct(data.data);
     } catch (err:unknown) {
+          if (err instanceof Error) {
         setError(err.message);
+    } else {
+        setError("An unknown error occurred");
+    }
     } finally {
         setLoading(false);
     }
@@ -206,7 +210,7 @@ const hasHalfStar = roundedRating % 1 !== 0;
 
           {/* Action Buttons */}
           <div className="flex gap-4">
-           <AddToCart  productQuantity={product.quantity}  handleAddtoCart={()=>handleAddtoCart(product._id)}  />
+           <AddToCart  productQuantity={product.quantity}  handleAddtoCart={()=>handleAddtoCart?.(product._id)}  />
             <Button variant="outline" size="lg">
               <Heart className="h-5 w-5" />
             </Button>

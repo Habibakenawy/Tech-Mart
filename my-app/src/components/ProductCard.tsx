@@ -14,7 +14,23 @@ import Image from "next/image";
 import { StarIcon, HeartIcon, EyeIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AddToCart from "./addToCart";
-import { useState } from "react";
+import { CategoryI } from "@/interfaces";
+
+interface ProductCardProps{
+  title:string;
+  price:number;
+  images:string[];
+  ratingAverage:number;
+  category:CategoryI;
+  description:string;
+  inStock:boolean;
+  view:string;
+  id:string;
+  handleAddtoCart: (productId: string) => Promise<void>;
+  quantity:number;
+}
+
+
 
 export function ProductCard({
   title,
@@ -27,11 +43,11 @@ export function ProductCard({
   view,
   id,
   handleAddtoCart,
-  quantity,
-}) {
+  quantity
+}:ProductCardProps) {
 
   const router = useRouter();
-  const handleActionClick = (e) => {
+  const handleActionClick = (e:React.MouseEvent) => {
     e.stopPropagation();
   };
 
@@ -39,13 +55,13 @@ export function ProductCard({
     router.push(`/products/${id}`);
   };
 
-  const addToWishlist = (e) => {
+  const addToWishlist = (e: React.MouseEvent) => {
     handleActionClick(e);
     // Add your wishlist logic here
     console.log("Added to wishlist!");
   };
 
-  const viewProduct = (e) => {
+  const viewProduct = (e: React.MouseEvent) => {
     handleActionClick(e);
     // Add your view logic here
     console.log("Viewing product!");

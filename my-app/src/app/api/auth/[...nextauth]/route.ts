@@ -13,10 +13,11 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         console.log("Received credentials:", credentials);
 
-        const res = await apiServices.login(
-          credentials?.email,
-          credentials?.password
-        );
+      if (!credentials?.email || !credentials?.password) {
+    throw new Error("Email and password are required.");
+  }
+
+  const res = await apiServices.login(credentials.email, credentials.password);
 
         console.log("Backend response:", res);
         console.log("NextAuth Secret:", process.env.NEXTAUTH_SECRET);

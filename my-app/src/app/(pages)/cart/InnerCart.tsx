@@ -31,7 +31,7 @@ export default function InnerCart({res}:InnerCartProps) {
 
     const [innerCartData,setInnerCartData] = useState<GetLoggedUserCart>(res);
     const [clearCart,setClearCart] = useState(false);
-    const {setCartCount} = useContext(cartContext);
+    const {setCartCount} = useContext(cartContext)!;
     const {data:session} = useSession();
 
 
@@ -47,6 +47,7 @@ export default function InnerCart({res}:InnerCartProps) {
             setLoading(false);
             const newCartRes=await apiServices.getLoggedUserCart(String(session?.accessToken));
             setInnerCartData(newCartRes);
+            if(setCartCount)
             setCartCount(newCartRes.numOfCartItems);
         }
    
@@ -64,15 +65,16 @@ export default function InnerCart({res}:InnerCartProps) {
             setClearCart(false);
             const newCartRes=await apiServices.getLoggedUserCart(String(session?.accessToken));
             setInnerCartData(newCartRes);
+            if(setCartCount)
             setCartCount(0);
             
         }
    
     };
 
-     if (!innerCartData || innerCartData.data.products.length === 0 ) {
+     if (!innerCartData ) {
       return (
-     <div className="container mx-auto px-4 py-8 text-center min-h-[90vh] flex flex-col justify-center items-center bg-gray-100">
+     <div className="mb-52 mx-auto px-4 py-8 text-center ">
           <ShoppingCart className="h-20 w-20 mx-auto text-gray-400 mb-4" />
           <h1 className="text-2xl font-bold mb-2">Your cart is empty.</h1>
           <p className="text-muted-foreground">Looks like you have not added anything to your cart yet.</p>
@@ -92,6 +94,7 @@ export default function InnerCart({res}:InnerCartProps) {
         } finally {
             const newCartRes = await apiServices.getLoggedUserCart(String(session?.accessToken));
             setInnerCartData(newCartRes);
+            if(setCartCount)
             setCartCount(newCartRes.numOfCartItems);
 
         }
