@@ -1,4 +1,5 @@
-import { SingleProductResponse, ProductResponse } from "@/types/responses";
+import { SingleProductResponse, ProductResponse, SingleBrandResponse, SingleCategoryResponse } from "@/types/responses";
+import { BrandResponse } from "@/types/responses";
 import {
   AddToCartResponse,
   GetLoggedUserCart,
@@ -10,7 +11,6 @@ import {
   AddAddressResponse,
   CashOrderResponse,
   CategoryResponse,
-  BrandResponse,
   LoginResponse,
   ForgotPasswordResponse,
   ResetPasswordResponse,
@@ -160,7 +160,7 @@ class ApiServices {
     }).then((res) => res.json());
   }
 
-  async getCategory(id: string): Promise<CategoryResponse> {
+  async getCategory(id: string): Promise<SingleCategoryResponse> {
     const res = await fetch(this.#baseUrl + `api/v1/categories/` + id);
     if (!res.ok) {
       throw new Error("Failed to fetch category. Please try again.");
@@ -175,7 +175,7 @@ class ApiServices {
     }).then((res) => res.json());
   }
 
-  async getBrand(id: string): Promise<BrandResponse> {
+  async getBrand(id: string): Promise<SingleBrandResponse> {
     const res = await fetch(this.#baseUrl + `api/v1/brands/` + id);
     if (!res.ok) {
       throw new Error("Failed to fetch brand. Please try again.");

@@ -27,13 +27,13 @@ import { apiServices } from '@/services/apiServices';
 import { toast } from 'react-hot-toast';
 import { scheme } from "@/schema/addressSchema";
 import { useSession } from "next-auth/react";
+import { CartContextType } from "@/contexts/cartContext";
 
 export default function UserAddressPage() {
-  const { cartId,setCartCount} = useContext(cartContext); 
-  const {data:session} = useSession();
-
-
-  const form = useForm<z.infer<typeof scheme>>({
+  //const { cartId,setCartCount} = useContext<CartContextType>(cartContext); 
+    const contextValue = useContext(cartContext);
+      const {data:session} = useSession();
+        const form = useForm<z.infer<typeof scheme>>({
     resolver: zodResolver(scheme),
     defaultValues: {
       name: "",
@@ -42,6 +42,14 @@ export default function UserAddressPage() {
       city: "Cairo", // Set a default city from the enum
     },
   });
+
+  if (!contextValue) {
+
+    return <div>Loading cart...</div>;
+  }
+
+
+  const { cartId, setCartCount } = contextValue;
 
   // Function to handle Visa payment
   async function handleVisaCheckout() {
@@ -53,9 +61,11 @@ export default function UserAddressPage() {
       const res= await apiServices.addAddresses(values,String(session?.accessToken));
       console.log(res);
       console.log("why",cartId)
-      const checkoutRes = await apiServices.checkOutSession(cartId,String(session?.accessToken),values.details,values.phone,values.city);
+      const checkoutRes = await apiServices.checkOutSession(String(cartId),String(session?.accessToken),values.details,values.phone,values.city);
       location.href = checkoutRes.session.url;
+    if (setCartCount) {
       setCartCount(0);
+     }
     } catch (error: unknown) {
     if (error instanceof Error) {
     toast.error(error.message);
@@ -72,9 +82,11 @@ export default function UserAddressPage() {
     const values = form.getValues();
     try {
       await apiServices.addAddresses(values,String(session?.accessToken));
-      const checkoutRes = await apiServices.cashOrder(cartId,String(session?.accessToken) ,values.details, values.phone, values.city);
+      const checkoutRes = await apiServices.cashOrder(String(cartId),String(session?.accessToken) ,values.details, values.phone, values.city);
       toast.success(checkoutRes.message || "Order placed successfully!");
+    if (setCartCount) {
       setCartCount(0);
+     }
       location.href="/allorders"
     } catch (error: unknown) {
         if (error instanceof Error) {

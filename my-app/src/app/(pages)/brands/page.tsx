@@ -18,9 +18,9 @@ export default function BrandsPage() {
     async function fetchBrands() {
       setLoading(true);
       try {
-        const data = await apiServices.getBrands();
-        if (data && data.results > 0) {
-          setBrands(data.data);
+        const {data} = await apiServices.getBrands();
+        if (data) {
+          setBrands(data);
           setError(null);
         } else {
           setBrands([]);

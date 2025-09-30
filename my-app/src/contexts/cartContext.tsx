@@ -5,11 +5,11 @@ import { toast } from 'react-hot-toast';
 import { useSession } from "next-auth/react";
 
 // Define the type for the cart context
-interface CartContextType {
-    cartCount: number;
-    setCartCount: React.Dispatch<React.SetStateAction<number>>;
-    handleAddtoCart: (productId: string) => Promise<void>;
-    cartId:string|null
+export interface CartContextType {
+    cartCount?: number;
+    setCartCount?: React.Dispatch<React.SetStateAction<number>>;
+    handleAddtoCart?: (productId: string) => Promise<void>;
+    cartId?:string|null
 }
 
 // Create the context with a default value

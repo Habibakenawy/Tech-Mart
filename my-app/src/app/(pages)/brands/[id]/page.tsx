@@ -5,17 +5,14 @@ import { apiServices } from "@/services/apiServices";
 import { Loader2, Frown } from "lucide-react";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
+import { BrandI } from '@/interfaces';
 
 
-interface BrandDetailsI {
-  _id: string;
-  name: string;
-  image: string;
-}
+
 
 export default function BrandPage() {
   const { id } = useParams();
-  const [brand, setBrand] = useState<BrandDetailsI | null>(null);
+  const [brand, setBrand] = useState<BrandI| null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,7 +22,7 @@ export default function BrandPage() {
       setLoading(true);
       try {
         const brandData = await apiServices.getBrand(String(id));
-        if (!brandData || !brandData.data) {
+        if (!brandData) {
           setError("Brand not found.");
         } else {
           setBrand(brandData.data);
