@@ -49,7 +49,7 @@ export default function UserAddressPage() {
   }
 
 
-  const { cartId, setCartCount } = contextValue;
+  const { cartId, setCartCount,handleClearCart } = contextValue;
 
   // Function to handle Visa payment
   async function handleVisaCheckout() {
@@ -87,6 +87,8 @@ export default function UserAddressPage() {
     if (setCartCount) {
       setCartCount(0);
      }
+    await handleClearCart();
+
       location.href="/allorders"
     } catch (error: unknown) {
         if (error instanceof Error) {

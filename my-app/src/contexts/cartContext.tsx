@@ -10,6 +10,7 @@ export interface CartContextType {
     setCartCount?: React.Dispatch<React.SetStateAction<number>>;
     handleAddtoCart?: (productId: string) => Promise<void>;
     cartId?:string|null
+    handleClearCart:  ()=>void
 }
 
 export const cartContext = createContext<CartContextType | null>(null);
@@ -21,6 +22,7 @@ interface CartContextProviderProps {
 export default function CartContextProvider({ children }: CartContextProviderProps) {
     // Initialize the cart count state
     const [cartCount, setCartCount] = useState(0);
+    const [clearCart,setClearCart] = useState(false);
     const [loadingCart,setLoadingCart] = useState(false);
     const [cartId,setCartId] = useState("");
       const { data: session } = useSession();
@@ -42,6 +44,22 @@ useEffect(() => {
   }
 }, [session]);
 
+      const handleClearCart = async () => {
+        try {
+            await apiServices.clearCart(String(session?.accessToken));
+            toast.success("Cart Cleared!");
+            setClearCart(true);
+        } catch (error) {
+            console.error("Failed to clear cart", error);
+            toast.error("Failed to clear cart");
+        } finally {
+            setClearCart(false);
+            if(setCartCount)
+            setCartCount(0);
+            
+        }
+   
+    };
 
   async function handleAddtoCart(productId:string){
       if (!session?.accessToken) {
@@ -56,7 +74,7 @@ useEffect(() => {
     setLoadingCart(false)
   }
     return (
-        <cartContext.Provider value={{ cartCount, setCartCount,handleAddtoCart,cartId}}>
+        <cartContext.Provider value={{ cartCount, setCartCount,handleAddtoCart,cartId,handleClearCart}}>
             {children}
         </cartContext.Provider>
     );
