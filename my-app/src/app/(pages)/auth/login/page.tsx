@@ -106,6 +106,13 @@ export default function LoginPage() {
             >
               Forgot Password?
             </Link>
+            {/* Rgister Link */}
+               <Link
+              href="signUp"
+              className="text-sm text-blue-600 hover:underline text-right block"
+            >
+              Don not have an account ? Register Now.
+            </Link>
             {/* Submit Button */}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? (

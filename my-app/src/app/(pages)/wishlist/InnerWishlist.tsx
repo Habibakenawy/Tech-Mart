@@ -1,35 +1,40 @@
 "use client";
 
-import React, { useContext, useState } from "react";
+import React, { useState, useContext } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
 import { Heart, ShoppingCart, Loader2, Trash2 } from "lucide-react";
-import { ProductI } from "@/interfaces";
+import { GetLoggedUserWishlistResponse, ProductI } from "@/interfaces";
 import { apiServices } from "@/services/apiServices";
 import { useSession } from "next-auth/react";
 import { cartContext } from "@/contexts/cartContext";
 import { WishlistContext } from "@/contexts/wishListContext";
 
-export default function InnerWishlist() {
+interface InnerWishlistProps {
+  res: GetLoggedUserWishlistResponse;
+}
+
+export default function InnerWishlist({ res }: InnerWishlistProps) {
+  const [wishlistData, setWishlistData] = useState<GetLoggedUserWishlistResponse>(res);
   const { data: session } = useSession();
   const { setCartCount } = useContext(cartContext)!;
   const wishlistCtx = useContext(WishlistContext);
-
   const [loadingRemove, setLoadingRemove] = useState<string | null>(null);
-  const [loading, setLoading] = useState<string | null>(null);
+  const [loading,setLoading]  = useState<string | null>(null);
 
   const handleRemove = async (productId: string) => {
     setLoadingRemove(productId);
     try {
       await apiServices.removeWishlist(productId, String(session?.accessToken));
       toast.success("Removed from wishlist ❤️‍🔥");
-      wishlistCtx?.setWishlist((prev) =>
-        prev?.filter((item) => item._id !== productId)
-      );
-      wishlistCtx?.setWishlistCount((prev) => prev - 1);
+setWishlistData((prev) => {
+  const updatedData = prev.data.filter((item) => item._id !== productId);
+  wishlistCtx?.setWishlistCount(updatedData.length);
+  return { ...prev, data: updatedData };
+});
     } catch (err) {
       toast.error("Failed to remove from wishlist");
     } finally {
@@ -53,18 +58,15 @@ export default function InnerWishlist() {
     }
   };
 
-  if (!wishlistCtx?.wishlist || wishlistCtx.wishlist.length === 0) {
+  if (!wishlistData.data || wishlistData.data.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8 text-center h-[70vh]">
+       <div className="container mx-auto px-4 py-8 text-center h-[70vh]">
         <Heart className="h-20 w-20 mx-auto text-gray-400 mb-4" />
         <h1 className="text-2xl font-bold mb-2">Your wishlist is empty.</h1>
         <p className="text-muted-foreground">
           Looks like you haven’t saved any products yet.
         </p>
-        <Link
-          className="mt-6 inline-block text-blue-600 hover:underline"
-          href="/"
-        >
+        <Link className="mt-6 inline-block text-blue-600 hover:underline" href="/">
           Continue Shopping
         </Link>
       </div>
@@ -73,7 +75,7 @@ export default function InnerWishlist() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {wishlistCtx.wishlist.map((product: ProductI) => (
+      {wishlistData.data.map((product: ProductI) => (
         <Card
           key={product._id}
           className="flex flex-col overflow-hidden hover:shadow-lg transition"
@@ -114,7 +116,7 @@ export default function InnerWishlist() {
                 variant="outline"
                 size="icon"
                 onClick={() => handleRemove(product._id)}
-                disabled={loadingRemove === product._id}
+                disabled={loading === product._id}
               >
                 {loadingRemove === product._id ? (
                   <Loader2 className="h-4 w-4 animate-spin" />

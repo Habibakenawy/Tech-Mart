@@ -8,6 +8,16 @@ export interface LoginResponse {
   };
 }
 
+export interface SignUpResponse {
+  token: string;
+  message:string;
+  user: {
+    name: string;
+    email: string;
+    role:string;
+  };
+}
+
 export interface ForgotPasswordResponse {
   statusMsg: string;
   message:string;

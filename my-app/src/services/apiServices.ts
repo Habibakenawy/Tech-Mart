@@ -17,6 +17,7 @@ import {
   GetLoggedUserWishlistResponse,
   addToWishlistResponse,
   removeFromWishlistResponse,
+  SignUpResponse,
 } from "@/interfaces";
 import { CategoryResponse } from "@/types/responses";
 
@@ -231,6 +232,21 @@ class ApiServices {
       headers: this.#getHeaders(token),
     }).then((res) => res.json());
   }
+
+    async signUp(name:string,email: string, password: string,rePassword:string,phone:string): Promise<SignUpResponse> {
+    const res = await fetch(this.#baseUrl + "api/v1/auth/signin", {
+      method: "POST",
+      body: JSON.stringify({ name,email, password,rePassword,phone }),
+      headers: this.#getHeaders(),
+    });
+
+    if (!res.ok) {
+      throw new Error("Register failed. Please check your credentials.");
+    }
+
+    return res.json();
+  }
+
   
 
 
